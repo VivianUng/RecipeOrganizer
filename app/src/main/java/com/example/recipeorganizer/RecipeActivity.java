@@ -92,6 +92,7 @@ public class RecipeActivity extends AppCompatActivity {
         String category = categoryEditText.getText().toString();
         List<String> ingredients = new ArrayList<>();
         List<String> instructions = new ArrayList<>();
+        boolean isPublished = false; // initialize isPublished as false
 
 
         // Collect ingredients
@@ -149,13 +150,17 @@ public class RecipeActivity extends AppCompatActivity {
             return;
         }
 
+
+
+
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Recipe recipe = new Recipe(
                 recipeRef.push().getKey(),
                 name,
                 String.join(", ", ingredients), // Store ingredients as comma-separated
                 String.join(", ", instructions), // Store instructions as comma-separated
-                category
+                category,
+                isPublished
         );
 
         // Store the recipe under the user's UID

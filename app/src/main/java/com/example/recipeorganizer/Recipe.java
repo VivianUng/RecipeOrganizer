@@ -8,16 +8,18 @@ public class Recipe implements Serializable {
     private String ingredients;
     private String instructions;
     private String category;
+    private boolean isPublished;
 
     public Recipe() {
     }
 
-    public Recipe(String id, String name, String ingredients, String instructions, String category) {
+    public Recipe(String id, String name, String ingredients, String instructions, String category, boolean isPublished) {
         this.id = id;
         this.name = name;
         this.ingredients = ingredients;
         this.instructions = instructions;
         this.category = category;
+        this.isPublished = isPublished;
     }
 
     public String getId() {
@@ -59,6 +61,10 @@ public class Recipe implements Serializable {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    public boolean isPublished() {return isPublished;}
+
+    public void setPublished(boolean published) {isPublished = published;}
 
     public boolean isHeader() {
         return name == null || name.isEmpty(); // Assuming that headers will have an empty or null name

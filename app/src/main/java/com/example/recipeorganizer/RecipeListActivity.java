@@ -31,7 +31,7 @@ public class RecipeListActivity extends AppCompatActivity {
     private List<Recipe> recipeList;
     private DatabaseReference recipeRef;
     private SearchView searchView;
-    private Button logoutButton, addRecipeButton;
+    private Button logoutButton, addRecipeButton, viewPublishedRecipesButton;
     private TextView categoryTextView; // Declare the category TextView
 
 
@@ -85,6 +85,13 @@ public class RecipeListActivity extends AppCompatActivity {
         addRecipeButton.setOnClickListener(v -> {
             Intent intent = new Intent(RecipeListActivity.this, RecipeActivity.class);
             startActivity(intent); // Navigates to the Add Recipe screen
+        });
+
+        // Set up view published recipes click listener
+        viewPublishedRecipesButton = findViewById(R.id.viewPublishedRecipesButton);
+        viewPublishedRecipesButton.setOnClickListener(v -> {
+                    Intent intent = new Intent(RecipeListActivity.this, PublishedRecipesActivity.class);
+                    startActivity(intent); // Navigates to the Published Recipes screen
         });
     }
 

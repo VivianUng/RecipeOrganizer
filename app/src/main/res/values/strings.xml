@@ -33,6 +33,13 @@
     <string name="my_recipes">My Recipes</string>
     <string name="no_recipe">No recipes saved</string>
     <string name="add_recipe_button">Add Recipe</string>
+    <string name="view_published_recipes_button">View Published Recipes</string>
+
+    <!--Published Recipe List page-->
+    <string name="published_recipes">Published Recipes</string>
+    <string name="no_published_recipes">No Published Recipes</string>
+    <string name="back_to_my_recipes_button">Back to My Recipes</string>
+
 
 
 </resources>

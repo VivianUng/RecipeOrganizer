@@ -2,17 +2,24 @@ package com.example.recipeorganizer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TextView nameTextView, ingredientsTextView, instructionsTextView, categoryTextView;
-    private Button backButton, editButton;
+    private Button backButton, editButton, publishButton;
 
     // Declare ActivityResultLauncher
     private ActivityResultLauncher<Intent> editRecipeLauncher;
@@ -22,6 +29,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
 
+
         // Initialize views
         nameTextView = findViewById(R.id.nameTextView);
         ingredientsTextView = findViewById(R.id.ingredientsTextView);
@@ -29,6 +37,16 @@ public class RecipeDetailActivity extends AppCompatActivity {
         categoryTextView = findViewById(R.id.categoryTextView);
         backButton = findViewById(R.id.backButton);
         editButton = findViewById(R.id.editButton);
+        publishButton = findViewById(R.id.publishButton);
+
+        // Get the isPublishedView flag from intent
+        boolean isPublishedView = getIntent().getBooleanExtra("isPublishedView", false);
+
+        // Hide the buttons if viewed from published recipes
+        if (isPublishedView) {
+            editButton.setVisibility(View.GONE);
+            publishButton.setVisibility(View.GONE);
+        }
 
 
         // Initialize ActivityResultLauncher
@@ -57,7 +75,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             categoryTextView.setText(recipe.getCategory());
             ingredientsTextView.setText(formatList(recipe.getIngredients()));
             instructionsTextView.setText(formatList(recipe.getInstructions()));
-
+            updatePublishButton(recipe.isPublished()); // Update button text based on current status
         }
 
         // Set up the back button click listener
@@ -69,7 +87,84 @@ public class RecipeDetailActivity extends AppCompatActivity {
             intent.putExtra("recipe", recipe);
             editRecipeLauncher.launch(intent); // Launch the edit activity
         });
+
+        // Set up the publish button click listener
+        publishButton.setOnClickListener(v -> {
+            if (recipe.isPublished()) {
+                unpublishRecipe(recipe); // Unpublish the recipe
+            } else {
+                publishRecipe(recipe); // Publish the recipe
+            }
+        });
     }
+
+    // Method to update button text
+    private void updatePublishButton(boolean isPublished) {
+        if (isPublished) {
+            publishButton.setText("Unpublish Recipe");
+        } else {
+            publishButton.setText("Publish Recipe");
+        }
+    }
+
+    // Method to publish a recipe
+    private void publishRecipe(Recipe recipe) {
+        recipe.setPublished(true);
+
+        // Update the user's private recipe reference to set `published` to true
+        DatabaseReference userRecipeRef = FirebaseDatabase.getInstance()
+                .getReference("recipes")
+                .child(FirebaseAuth.getInstance().getUid()) // Replace with userId if you store it separately
+                .child(recipe.getId());
+
+        userRecipeRef.child("published").setValue(true).addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                // Now add the recipe to the public recipes in the database
+                DatabaseReference publicRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
+                publicRecipeRef.child(recipe.getId()).setValue(recipe).addOnCompleteListener(task2 -> {
+                    if (task2.isSuccessful()) {
+                        updatePublishButton(true); // Update button text to reflect the published status
+                        Toast.makeText(RecipeDetailActivity.this, "Recipe Published Successfully", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                // Handle error if updating the private recipe fails
+                Toast.makeText(RecipeDetailActivity.this, "Failed to Publish Recipe", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+    }
+
+
+    // Method to unpublish a recipe
+    private void unpublishRecipe(Recipe recipe) {
+        recipe.setPublished(false);
+
+        // Remove the recipe from the public recipes list
+        DatabaseReference publicRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
+        publicRecipeRef.child(recipe.getId()).removeValue().addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                // If successful, update the user's private recipe to set `published` to false
+                DatabaseReference userRecipeRef = FirebaseDatabase.getInstance()
+                        .getReference("recipes")
+                        .child(FirebaseAuth.getInstance().getUid())
+                        .child(recipe.getId());
+
+                userRecipeRef.child("published").setValue(false).addOnCompleteListener(task2 -> {
+                    if (task2.isSuccessful()) {
+                        updatePublishButton(false); // Update button text to reflect unpublished status
+                    } else {
+                        // Handle error if updating the private recipe fails
+                        Log.e("UnpublishRecipe", "Failed to update published status in user's recipe list.");
+                    }
+                });
+            } else {
+                // Handle error if removing from public recipes fails
+                Log.e("UnpublishRecipe", "Failed to remove recipe from public recipes list.");
+            }
+        });
+    }
+
 
     private String formatList(String input) {
         String[] items = input.split(", ");

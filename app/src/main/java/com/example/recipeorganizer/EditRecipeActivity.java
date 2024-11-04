@@ -12,8 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ public class EditRecipeActivity extends AppCompatActivity {
     private Button addIngredientButton, addInstructionButton, updateRecipeButton, deleteButton, cancelButton;
 
     private String recipeId;
+    private boolean isPublished;
     private DatabaseReference recipeRef;
 
     @Override
@@ -111,6 +115,8 @@ public class EditRecipeActivity extends AppCompatActivity {
         instructionsLayout.addView(instructionLayout);
     }
 
+
+
     private void updateRecipe() {
         String name = recipeNameEditText.getText().toString();
         String category = categoryEditText.getText().toString();
@@ -159,37 +165,83 @@ public class EditRecipeActivity extends AppCompatActivity {
         }
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Recipe recipe = new Recipe(recipeId, name, String.join(", ", ingredients), String.join(", ", instructions), category);
 
-        recipeRef.child(userId).child(recipeId).setValue(recipe)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(EditRecipeActivity.this, "Recipe Updated", Toast.LENGTH_SHORT).show();
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra("updatedRecipe", recipe);
-                        setResult(RESULT_OK, returnIntent);
-                        finish();
-                    } else {
-                        Toast.makeText(EditRecipeActivity.this, "Failed to Update Recipe", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
+        // Fetch the current recipe to retain the published status
+        recipeRef.child(userId).child(recipeId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Recipe existingRecipe = dataSnapshot.getValue(Recipe.class);
+                    boolean isPublished = existingRecipe != null && existingRecipe.isPublished();
 
-    private void deleteRecipe() {
-        if (recipeId != null) {
-            recipeRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(recipeId).removeValue()
-                    .addOnCompleteListener(task -> {
+                    // Create new Recipe object with existing published status
+                    Recipe updatedRecipe = new Recipe(recipeId, name, String.join(", ", ingredients), String.join(", ", instructions), category, isPublished);
+
+                    // Update the local recipe in the user's private list
+                    recipeRef.child(userId).child(recipeId).setValue(updatedRecipe).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Toast.makeText(EditRecipeActivity.this, "Recipe Deleted", Toast.LENGTH_SHORT).show();
-                            // Navigate back to RecipeListActivity
-                            Intent intent = new Intent(EditRecipeActivity.this, RecipeListActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent); // Start RecipeListActivity
-                            finish(); // Close current activity
+                            // Update the public recipes database if the recipe is published
+                            if (isPublished) {
+                                DatabaseReference publicRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
+                                publicRecipeRef.child(recipeId).setValue(updatedRecipe).addOnCompleteListener(publicTask -> {
+                                    if (publicTask.isSuccessful()) {
+                                        Toast.makeText(EditRecipeActivity.this, "Recipe Updated Successfully", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(EditRecipeActivity.this, "Failed to Update Public Recipe", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(EditRecipeActivity.this, "Recipe Updated Successfully", Toast.LENGTH_SHORT).show();
+                            }
+
+                            Intent returnIntent = new Intent();
+                            returnIntent.putExtra("updatedRecipe", updatedRecipe);
+                            setResult(RESULT_OK, returnIntent);
+                            finish();
                         } else {
-                            Toast.makeText(EditRecipeActivity.this, "Failed to Delete Recipe", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EditRecipeActivity.this, "Failed to Update Recipe", Toast.LENGTH_SHORT).show();
                         }
                     });
-        }
+                } else {
+                    Toast.makeText(EditRecipeActivity.this, "Recipe not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(EditRecipeActivity.this, "Database Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
+    private void deleteRecipe() {
+    if (recipeId != null) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Remove the recipe from the user's private list
+        recipeRef.child(userId).child(recipeId).removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Check and remove the recipe from public recipes if it is published
+                DatabaseReference publicRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
+                publicRecipeRef.child(recipeId).removeValue().addOnCompleteListener(publicTask -> {
+                    if (publicTask.isSuccessful()) {
+                        Toast.makeText(EditRecipeActivity.this, "Recipe Deleted", Toast.LENGTH_SHORT).show();
+                        // Navigate back to RecipeListActivity
+                        Intent intent = new Intent(EditRecipeActivity.this, RecipeListActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent); // Start RecipeListActivity
+                        finish(); // Close current activity
+                    } else {
+                        Toast.makeText(EditRecipeActivity.this, "Failed to Delete from Public Recipes", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(EditRecipeActivity.this, "Failed to Delete Recipe", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
+
+
 }
