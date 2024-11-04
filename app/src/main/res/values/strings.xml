@@ -27,6 +27,7 @@
     <!--recipe details page-->
     <string name="back_button_text">Back</string>
     <string name="edit_recipe_button_text">Edit Recipe</string>
+    <string name="publish_recipe_button">Publish Recipe</string>
 
     <!--recipe list page-->
     <string name="logout">Logout</string>
