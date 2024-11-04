@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">RecipeOrganizer</string>
+
+<!--    add / edit recipe page-->
+    <string name="category">Category</string>
+    <string name="category_hint">Category</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="recipe_name_hint">Recipe Name</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="instructions">Instructions</string>
+    <string name="add_instruction">Add Instruction</string>
+    <string name="add_recipe">Add Recipe</string>
+    <string name="cancel">Cancel</string>
+    <string name="update_recipe">Update Recipe</string>
+    <string name="delete_recipe">Delete Recipe</string>
+
+    <!--login page-->
+    <string name="recipe_organizer">Recipe Organizer!</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button_text">Login</string>
+    <string name="dont_have_acc">Don\'t have an account? Sign Up now!</string>
+    <string name="sign_up_button_text">Sign Up</string>
+
+
+    <!--recipe details page-->
+    <string name="back_button_text">Back</string>
+    <string name="edit_recipe_button_text">Edit Recipe</string>
+
+    <!--recipe list page-->
+    <string name="logout">Logout</string>
+    <string name="my_recipes">My Recipes</string>
+    <string name="no_recipe">No recipes saved</string>
+    <string name="add_recipe_button">Add Recipe</string>
+
+
+</resources>
