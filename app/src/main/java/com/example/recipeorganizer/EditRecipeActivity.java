@@ -3,9 +3,11 @@ package com.example.recipeorganizer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +25,12 @@ import java.util.List;
 
 public class EditRecipeActivity extends AppCompatActivity {
 
-    private EditText recipeNameEditText, categoryEditText;
+    private EditText recipeNameEditText, customCategoryEditText;
+    private Spinner categorySpinner;
     private LinearLayout ingredientsLayout, instructionsLayout;
     private Button addIngredientButton, addInstructionButton, updateRecipeButton, deleteButton, cancelButton;
 
     private String recipeId;
-    private boolean isPublished;
     private DatabaseReference recipeRef;
 
     @Override
@@ -37,13 +39,14 @@ public class EditRecipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_recipe);
 
         recipeNameEditText = findViewById(R.id.recipeNameEditText);
-        categoryEditText = findViewById(R.id.categoryEditText);
+        categorySpinner = findViewById(R.id.categorySpinner);
+        customCategoryEditText = findViewById(R.id.customCategoryEditText);
         ingredientsLayout = findViewById(R.id.ingredientsLayout);
         instructionsLayout = findViewById(R.id.instructionsLayout);
         addIngredientButton = findViewById(R.id.addIngredientButton);
         addInstructionButton = findViewById(R.id.addInstructionButton);
         updateRecipeButton = findViewById(R.id.updateRecipeButton);
-        deleteButton = findViewById(R.id.deleteButton); // Initialize delete button
+        deleteButton = findViewById(R.id.deleteButton);
         cancelButton = findViewById(R.id.cancelButton);
 
         recipeRef = FirebaseDatabase.getInstance().getReference("recipes");
@@ -53,7 +56,20 @@ public class EditRecipeActivity extends AppCompatActivity {
         if (recipe != null) {
             recipeId = recipe.getId();
             recipeNameEditText.setText(recipe.getName());
-            categoryEditText.setText(recipe.getCategory());
+            String category = recipe.getCategory();
+
+            // Check if the saved category is within the preset categories
+            if (isCategoryPreset(category)) {
+                categorySpinner.setSelection(getCategoryPosition(category));
+                customCategoryEditText.setVisibility(View.GONE);
+            } else {
+                // If not, set it as a custom category
+                customCategoryEditText.setText(category);
+                customCategoryEditText.setVisibility(View.VISIBLE);
+                // Set the spinner to the last position (assuming "Other" is the last item)
+                categorySpinner.setSelection(categorySpinner.getAdapter().getCount() - 1);
+            }
+
             populateFields(recipe.getIngredients(), ingredientsLayout);
             populateFields(recipe.getInstructions(), instructionsLayout);
         }
@@ -61,10 +77,46 @@ public class EditRecipeActivity extends AppCompatActivity {
         addIngredientButton.setOnClickListener(v -> addIngredientField(""));
         addInstructionButton.setOnClickListener(v -> addInstructionField(""));
         updateRecipeButton.setOnClickListener(v -> updateRecipe());
-        deleteButton.setOnClickListener(v -> deleteRecipe()); // Set up delete button click listener
-        cancelButton.setOnClickListener(v -> finish()); // Close the activity on cancel
+        deleteButton.setOnClickListener(v -> deleteRecipe());
+        cancelButton.setOnClickListener(v -> finish());
+
+        // Listener for category spinner selection
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if (position == categorySpinner.getAdapter().getCount() - 1) { // custom option as last option
+                    customCategoryEditText.setVisibility(View.VISIBLE);
+                } else {
+                    customCategoryEditText.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing
+            }
+        });
     }
 
+    private boolean isCategoryPreset(String category) {
+        String[] categories = getResources().getStringArray(R.array.category_array);
+        for (String presetCategory : categories) {
+            if (presetCategory.equals(category)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int getCategoryPosition(String category) {
+        String[] categories = getResources().getStringArray(R.array.category_array);
+        for (int i = 0; i < categories.length; i++) {
+            if (categories[i].equals(category)) {
+                return i;
+            }
+        }
+        return 0; // Default to first category if not found
+    }
 
     private void populateFields(String data, LinearLayout layout) {
         String[] items = data.split(", ");
@@ -115,11 +167,24 @@ public class EditRecipeActivity extends AppCompatActivity {
         instructionsLayout.addView(instructionLayout);
     }
 
-
-
     private void updateRecipe() {
         String name = recipeNameEditText.getText().toString();
-        String category = categoryEditText.getText().toString();
+        String category = categorySpinner.getSelectedItem().toString();
+
+        // Check for custom category input if "Other" is selected
+        if (category.equals("Other")) {
+            String customCategory = customCategoryEditText.getText().toString();
+            if (!customCategory.isEmpty()) {
+                category = customCategory;
+            } else {
+                Toast.makeText(this, "Please enter a custom category", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        // Create a new variable for the category to use in the inner class
+        final String finalCategory = category;
+
         List<String> ingredients = new ArrayList<>();
         List<String> instructions = new ArrayList<>();
 
@@ -175,7 +240,7 @@ public class EditRecipeActivity extends AppCompatActivity {
                     boolean isPublished = existingRecipe != null && existingRecipe.isPublished();
 
                     // Create new Recipe object with existing published status
-                    Recipe updatedRecipe = new Recipe(recipeId, name, String.join(", ", ingredients), String.join(", ", instructions), category, isPublished);
+                    Recipe updatedRecipe = new Recipe(recipeId, name, String.join(", ", ingredients), String.join(", ", instructions), finalCategory, isPublished);
 
                     // Update the local recipe in the user's private list
                     recipeRef.child(userId).child(recipeId).setValue(updatedRecipe).addOnCompleteListener(task -> {
@@ -214,34 +279,31 @@ public class EditRecipeActivity extends AppCompatActivity {
         });
     }
 
-
     private void deleteRecipe() {
-    if (recipeId != null) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (recipeId != null) {
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // Remove the recipe from the user's private list
-        recipeRef.child(userId).child(recipeId).removeValue().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                // Check and remove the recipe from public recipes if it is published
-                DatabaseReference publicRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
-                publicRecipeRef.child(recipeId).removeValue().addOnCompleteListener(publicTask -> {
-                    if (publicTask.isSuccessful()) {
-                        Toast.makeText(EditRecipeActivity.this, "Recipe Deleted", Toast.LENGTH_SHORT).show();
-                        // Navigate back to RecipeListActivity
-                        Intent intent = new Intent(EditRecipeActivity.this, RecipeListActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent); // Start RecipeListActivity
-                        finish(); // Close current activity
-                    } else {
-                        Toast.makeText(EditRecipeActivity.this, "Failed to Delete from Public Recipes", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                Toast.makeText(EditRecipeActivity.this, "Failed to Delete Recipe", Toast.LENGTH_SHORT).show();
-            }
-        });
+            // Remove the recipe from the user's private list
+            recipeRef.child(userId).child(recipeId).removeValue().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // Check and remove the recipe from public recipes if it is published
+                    DatabaseReference publicRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
+                    publicRecipeRef.child(recipeId).removeValue().addOnCompleteListener(publicTask -> {
+                        if (publicTask.isSuccessful()) {
+                            Toast.makeText(EditRecipeActivity.this, "Recipe Deleted", Toast.LENGTH_SHORT).show();
+                            // Navigate back to RecipeListActivity
+                            Intent intent = new Intent(EditRecipeActivity.this, RecipeListActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent); // Start RecipeListActivity
+                            finish(); // Close current activity
+                        } else {
+                            Toast.makeText(EditRecipeActivity.this, "Failed to Delete from Public Recipes", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(EditRecipeActivity.this, "Failed to Delete Recipe", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
-}
-
-
 }

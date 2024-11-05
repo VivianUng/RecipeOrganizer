@@ -4,6 +4,7 @@
 <!--    add / edit recipe page-->
     <string name="category">Category</string>
     <string name="category_hint">Category</string>
+    <string name="enter_custom_category">Enter custom category</string>
     <string name="recipe_name">Recipe Name</string>
     <string name="recipe_name_hint">Recipe Name</string>
     <string name="ingredients">Ingredients</string>
@@ -14,6 +15,15 @@
     <string name="cancel">Cancel</string>
     <string name="update_recipe">Update Recipe</string>
     <string name="delete_recipe">Delete Recipe</string>
+
+    <string-array name="category_array">
+        <item>Appetizer</item>
+        <item>Main Course</item>
+        <item>Dessert</item>
+        <item>Baking</item>
+        <item>Snacks</item>
+        <item>Other</item> <!-- 'Other' option to allow custom input -->
+    </string-array>
 
     <!--login page-->
     <string name="recipe_organizer">Recipe Organizer!</string>

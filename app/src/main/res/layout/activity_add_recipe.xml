@@ -16,16 +16,29 @@
             android:layout_height="wrap_content"
             android:text="@string/category" />
 
-        <EditText
-            android:id="@+id/categoryEditText"
+        <Spinner
+            android:id="@+id/categorySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/category_hint"
+            android:layout_marginBottom="8dp"
+            android:entries="@array/category_array"
+            android:padding="16dp"
+            android:popupBackground="@android:color/white"
+            android:textColor="@android:color/black"
+            android:background="@drawable/rounded_spinner_background"
+            android:spinnerMode="dropdown" />
+
+        <EditText
+            android:id="@+id/customCategoryEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_custom_category"
+            android:visibility="gone"
             android:background="@drawable/rounded_edit_text"
             android:padding="16dp"
             android:layout_marginBottom="16dp"
             android:textColorHint="@android:color/darker_gray"
-            android:textColor="@android:color/darker_gray"/>
+            android:textColor="@android:color/darker_gray" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -1,14 +1,13 @@
 package com.example.recipeorganizer;
 
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -21,7 +20,8 @@ import java.util.List;
 // Add recipe page
 public class RecipeActivity extends AppCompatActivity {
 
-    private EditText recipeNameEditText, categoryEditText;
+    private EditText recipeNameEditText, customCategoryEditText;
+    private Spinner categorySpinner;
     private LinearLayout ingredientsLayout, instructionsLayout;
     private Button addIngredientButton, addInstructionButton, addRecipeButton, cancelButton;
 
@@ -33,7 +33,8 @@ public class RecipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_recipe);
 
         recipeNameEditText = findViewById(R.id.recipeNameEditText);
-        categoryEditText = findViewById(R.id.categoryEditText);
+        categorySpinner = findViewById(R.id.categorySpinner);
+        customCategoryEditText = findViewById(R.id.customCategoryEditText);
         ingredientsLayout = findViewById(R.id.ingredientsLayout);
         instructionsLayout = findViewById(R.id.instructionsLayout);
         addIngredientButton = findViewById(R.id.addIngredientButton);
@@ -42,6 +43,23 @@ public class RecipeActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.cancelButton);
 
         recipeRef = FirebaseDatabase.getInstance().getReference("recipes");
+
+        // Set listener to show or hide custom category field based on selected item
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCategory = categorySpinner.getSelectedItem().toString();
+                if ("Other".equals(selectedCategory)) {
+                    customCategoryEditText.setVisibility(View.VISIBLE);
+                } else {
+                    customCategoryEditText.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // No action needed
+            }
+        });
 
         addIngredientButton.setOnClickListener(v -> addIngredientField());
         addInstructionButton.setOnClickListener(v -> addInstructionField());
@@ -89,7 +107,8 @@ public class RecipeActivity extends AppCompatActivity {
 
     private void addRecipe() {
         String name = recipeNameEditText.getText().toString();
-        String category = categoryEditText.getText().toString();
+        String selectedCategory = categorySpinner.getSelectedItem().toString();
+        String category = "Other".equals(selectedCategory) ? customCategoryEditText.getText().toString() : selectedCategory;
         List<String> ingredients = new ArrayList<>();
         List<String> instructions = new ArrayList<>();
         boolean isPublished = false; // initialize isPublished as false
