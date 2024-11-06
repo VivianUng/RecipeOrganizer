@@ -1,8 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Logout Button -->
     <Button
         android:id="@+id/logoutButton"
         android:layout_width="40dp"
@@ -13,7 +13,6 @@
         android:contentDescription="@string/logout"
         android:text="" />
 
-    <!-- Header TextView -->
     <TextView
         android:id="@+id/headerTextView"
         android:layout_width="wrap_content"
@@ -23,9 +22,9 @@
         android:textStyle="bold"
         android:layout_margin="16dp"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        android:textColor="@color/colorPrimary" />
 
-    <!-- SearchView for Searching Recipes -->
     <SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
@@ -35,7 +34,6 @@
         android:queryHint="Search Recipes"
         android:background="@drawable/search_view_background" />
 
-    <!-- No Recipes TextView -->
     <TextView
         android:id="@+id/noRecipesTextView"
         android:layout_width="wrap_content"
@@ -45,9 +43,9 @@
         android:visibility="gone"
         android:layout_below="@id/searchView"
         android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp" />
+        android:layout_marginStart="16dp"
+        android:textColor="@color/colorSecondary" />
 
-    <!-- Back to My Recipes Button -->
     <Button
         android:id="@+id/backToMyRecipesButton"
         android:layout_width="wrap_content"
@@ -60,7 +58,6 @@
         android:textColor="@android:color/white"
         android:padding="16dp"/>
 
-    <!-- ScrollView containing RecyclerView for Recipes -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,11 +65,11 @@
         android:layout_above="@id/backToMyRecipesButton"
         android:fillViewport="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <!-- Category TextView (optional, if needed for categories) -->
             <TextView
                 android:id="@+id/categoryTextView"
                 android:layout_width="wrap_content"
@@ -82,14 +79,13 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"/>
 
-            <!-- RecyclerView for Published Recipes -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/publishedRecipesRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/categoryTextView" />
+                android:layout_height="wrap_content"/>
 
-        </RelativeLayout>
+        </LinearLayout>
     </ScrollView>
 
 </RelativeLayout>
+

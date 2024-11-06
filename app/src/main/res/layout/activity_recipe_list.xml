@@ -5,8 +5,8 @@
 
     <Button
         android:id="@+id/logoutButton"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_margin="8dp"
         android:background="@drawable/ic_logout"
@@ -17,12 +17,13 @@
         android:id="@+id/headerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/my_recipes"
+        android:text="@string/my_recipes_header"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_margin="16dp"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        android:textColor="@color/colorPrimary" />
 
     <SearchView
         android:id="@+id/searchView"
@@ -42,7 +43,8 @@
         android:visibility="gone"
         android:layout_below="@id/searchView"
         android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp" />
+        android:layout_marginStart="16dp"
+        android:textColor="@color/colorSecondary" />
 
     <Button
         android:id="@+id/viewPublishedRecipesButton"
@@ -75,9 +77,10 @@
         android:layout_above="@id/addRecipeButton"
         android:fillViewport="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/categoryTextView"
@@ -91,11 +94,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recipeRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/categoryTextView" />
+                android:layout_height="wrap_content"/>
 
-        </RelativeLayout>
-
+        </LinearLayout>
     </ScrollView>
 
 </RelativeLayout>

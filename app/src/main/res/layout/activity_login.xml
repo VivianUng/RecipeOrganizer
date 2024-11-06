@@ -13,7 +13,7 @@
         android:textStyle="bold"
         android:layout_gravity="center"
         android:layout_marginBottom="32dp"
-        android:textColor="@android:color/darker_gray"/>
+        android:textColor="@color/colorPrimary"/>
 
     <EditText
         android:id="@+id/emailEditText"
