@@ -16,6 +16,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.List;
+
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TextView nameTextView, ingredientsTextView, instructionsTextView, categoryTextView;
@@ -24,11 +26,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
     // Declare ActivityResultLauncher
     private ActivityResultLauncher<Intent> editRecipeLauncher;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
-
 
         // Initialize views
         nameTextView = findViewById(R.id.nameTextView);
@@ -47,7 +49,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
             editButton.setVisibility(View.GONE);
             publishButton.setVisibility(View.GONE);
         }
-
 
         // Initialize ActivityResultLauncher
         editRecipeLauncher = registerForActivityResult(
@@ -73,8 +74,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (recipe != null) {
             nameTextView.setText(recipe.getName());
             categoryTextView.setText(recipe.getCategory());
-            ingredientsTextView.setText(formatList(recipe.getIngredients()));
-            instructionsTextView.setText(formatList(recipe.getInstructions()));
+            ingredientsTextView.setText(formatList(recipe.getIngredients())); // Updated to handle List<String>
+            instructionsTextView.setText(formatList(recipe.getInstructions())); // Updated to handle List<String>
             updatePublishButton(recipe.isPublished()); // Update button text based on current status
         }
 
@@ -165,13 +166,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
         });
     }
 
-
-    private String formatList(String input) {
-        String[] items = input.split(", ");
+    private String formatList(List<String> items) {
         StringBuilder formattedList = new StringBuilder();
-        for (int i = 0; i < items.length; i++) {
-            formattedList.append(i + 1).append(". ").append(items[i]).append("\n");
+        for (int i = 0; i < items.size(); i++) {
+            formattedList.append(i + 1).append(". ").append(items.get(i)).append("\n");
         }
         return formattedList.toString().trim();
     }
+
+
+
 }

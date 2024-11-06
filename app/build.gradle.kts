@@ -46,4 +46,7 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-analytics")
+
+    implementation("org.jsoup:jsoup:1.15.3")
+    implementation(kotlin("script-runtime"))
 }

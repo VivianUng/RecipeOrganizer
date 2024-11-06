@@ -118,13 +118,13 @@ public class EditRecipeActivity extends AppCompatActivity {
         return 0; // Default to first category if not found
     }
 
-    private void populateFields(String data, LinearLayout layout) {
-        String[] items = data.split(", ");
-        for (String item : items) {
+
+    private void populateFields(List<String> data, LinearLayout layout) {
+        for (String item : data) {
             if (layout == ingredientsLayout) {
-                addIngredientField(item);
+                addIngredientField(item); // Call to addIngredientField with item
             } else if (layout == instructionsLayout) {
-                addInstructionField(item);
+                addInstructionField(item); // Call to addInstructionField with item
             }
         }
     }
@@ -167,11 +167,11 @@ public class EditRecipeActivity extends AppCompatActivity {
         instructionsLayout.addView(instructionLayout);
     }
 
+
     private void updateRecipe() {
         String name = recipeNameEditText.getText().toString();
         String category = categorySpinner.getSelectedItem().toString();
 
-        // Check for custom category input if "Other" is selected
         if (category.equals("Other")) {
             String customCategory = customCategoryEditText.getText().toString();
             if (!customCategory.isEmpty()) {
@@ -182,7 +182,6 @@ public class EditRecipeActivity extends AppCompatActivity {
             }
         }
 
-        // Create a new variable for the category to use in the inner class
         final String finalCategory = category;
 
         List<String> ingredients = new ArrayList<>();
@@ -238,14 +237,11 @@ public class EditRecipeActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     Recipe existingRecipe = dataSnapshot.getValue(Recipe.class);
                     boolean isPublished = existingRecipe != null && existingRecipe.isPublished();
-
-                    // Create new Recipe object with existing published status
-                    Recipe updatedRecipe = new Recipe(recipeId, name, String.join(", ", ingredients), String.join(", ", instructions), finalCategory, isPublished);
+                    Recipe updatedRecipe = new Recipe(recipeId, name, ingredients, instructions, finalCategory, isPublished);
 
                     // Update the local recipe in the user's private list
                     recipeRef.child(userId).child(recipeId).setValue(updatedRecipe).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Update the public recipes database if the recipe is published
                             if (isPublished) {
                                 DatabaseReference publicRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
                                 publicRecipeRef.child(recipeId).setValue(updatedRecipe).addOnCompleteListener(publicTask -> {

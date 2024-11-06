@@ -1,27 +1,29 @@
 package com.example.recipeorganizer;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Recipe implements Serializable {
     private String id;
     private String name;
-    private String ingredients;
-    private String instructions;
+    private List<String> ingredients; // Changed to List<String>
+    private List<String> instructions; // Changed to List<String>
     private String category;
     private boolean isPublished;
 
     public Recipe() {
     }
 
-    public Recipe(String id, String name, String ingredients, String instructions, String category, boolean isPublished) {
+    public Recipe(String id, String name, List<String> ingredients, List<String> instructions, String category, boolean isPublished) {
         this.id = id;
         this.name = name;
-        this.ingredients = ingredients;
-        this.instructions = instructions;
+        this.ingredients = ingredients; // Updated
+        this.instructions = instructions; // Updated
         this.category = category;
         this.isPublished = isPublished;
     }
 
+    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -38,19 +40,19 @@ public class Recipe implements Serializable {
         this.name = name;
     }
 
-    public String getIngredients() {
+    public List<String> getIngredients() { // Updated
         return ingredients;
     }
 
-    public void setIngredients(String ingredients) {
+    public void setIngredients(List<String> ingredients) { // Updated
         this.ingredients = ingredients;
     }
 
-    public String getInstructions() {
+    public List<String> getInstructions() { // Updated
         return instructions;
     }
 
-    public void setInstructions(String instructions) {
+    public void setInstructions(List<String> instructions) { // Updated
         this.instructions = instructions;
     }
 
@@ -62,15 +64,19 @@ public class Recipe implements Serializable {
         this.category = category;
     }
 
-    public boolean isPublished() {return isPublished;}
+    public boolean isPublished() {
+        return isPublished;
+    }
 
-    public void setPublished(boolean published) {isPublished = published;}
+    public void setPublished(boolean published) {
+        isPublished = published;
+    }
 
     public boolean isHeader() {
-        return name == null || name.isEmpty(); // Assuming that headers will have an empty or null name
+        return name == null || name.isEmpty();
     }
 
     public boolean isSpacer() {
-        return name == null; // Treat a recipe with a null name as a spacer
+        return name == null;
     }
 }

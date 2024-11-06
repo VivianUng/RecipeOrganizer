@@ -14,6 +14,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Got a recipe website link? Generate recipe now!" />
+
+        <EditText
+            android:id="@+id/recipeLinkEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Paste website link here"
+            android:background="@drawable/rounded_edit_text"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColorHint="@android:color/darker_gray"
+            android:textColor="@android:color/darker_gray" />
+
+        <Button
+            android:id="@+id/generateRecipeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Generate Recipe" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/category" />
 
         <Spinner
