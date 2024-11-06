@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class SignupLoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
-    private Button loginButton, signupButton;
+    private Button loginButton, signupButton, forgotPasswordButton;
     private FirebaseAuth auth;
 
 
@@ -28,10 +28,12 @@ public class SignupLoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         signupButton = findViewById(R.id.signupButton);
+        forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
 
 
         loginButton.setOnClickListener(v -> loginUser());
         signupButton.setOnClickListener(v -> signupUser());
+        forgotPasswordButton.setOnClickListener(v -> forgotPassword());
     }
 
 
@@ -90,4 +92,23 @@ public class SignupLoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void forgotPassword() {
+        String email = emailEditText.getText().toString().trim();
+
+        if (email.isEmpty()) {
+            Toast.makeText(SignupLoginActivity.this, "Please enter your email address", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(SignupLoginActivity.this, "Password reset email sent", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(SignupLoginActivity.this, "Error in sending password reset email", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 }

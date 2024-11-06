@@ -38,6 +38,7 @@
     <string name="login_button_text">Login</string>
     <string name="dont_have_acc">Don\'t have an account? Sign Up now!</string>
     <string name="sign_up_button_text">Sign Up</string>
+    <string name="forgot_password_button">Forgot Password?</string>
 
 
     <!--recipe details page-->
@@ -76,6 +77,7 @@
     <string name="current_password_label">Current Password</string>
     <string name="new_password_label">New Password</string>
     <string name="confirm_new_password_label">Confirm New Password</string>
+
 
 
 </resources>
