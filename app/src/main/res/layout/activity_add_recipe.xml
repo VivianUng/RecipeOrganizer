@@ -14,13 +14,22 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Got a recipe website link? Generate recipe now!" />
+            android:text="@string/add_a_new_recipe_header"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scraper_prompt" />
 
         <EditText
             android:id="@+id/recipeLinkEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Paste website link here"
+            android:hint="@string/link_input_hint"
             android:background="@drawable/rounded_edit_text"
             android:padding="16dp"
             android:layout_marginBottom="16dp"
@@ -31,7 +40,9 @@
             android:id="@+id/generateRecipeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Generate Recipe" />
+            android:text="@string/generate_recipe_button"
+            android:background="@drawable/rounded_button"
+            android:layout_marginBottom="24dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -93,7 +104,8 @@
             android:id="@+id/addIngredientButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_ingredient"/>
+            android:text="@string/add_ingredient"
+            android:background="@drawable/rounded_button"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -110,18 +122,23 @@
             android:id="@+id/addInstructionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_instruction" />
+            android:text="@string/add_instruction"
+            android:background="@drawable/rounded_button"/>
 
         <Button
             android:id="@+id/addRecipeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_recipe" />
+            android:text="@string/add_recipe"
+            android:background="@drawable/rounded_button"
+            android:layout_marginTop="24dp"/>
 
         <Button
             android:id="@+id/cancelButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/cancel" />
+            android:text="@string/cancel"
+            android:background="@drawable/rounded_button"
+            android:layout_marginTop="24dp"/>
     </LinearLayout>
 </ScrollView>

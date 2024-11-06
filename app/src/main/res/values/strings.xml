@@ -2,6 +2,11 @@
     <string name="app_name">RecipeOrganizer</string>
 
 <!--    add / edit recipe page-->
+    <string name="add_a_new_recipe_header">Add a New Recipe</string>
+    <string name="edit_recipe_header">Edit Recipe</string>
+    <string name="scraper_prompt">Got a recipe website link? Generate recipe now!</string>
+    <string name="link_input_hint">Paste website link here</string>
+    <string name="generate_recipe_button">Generate Recipe</string>
     <string name="category">Category</string>
     <string name="category_hint">Category</string>
     <string name="enter_custom_category">Enter custom category</string>
@@ -38,6 +43,7 @@
     <string name="back_button_text">Back</string>
     <string name="edit_recipe_button_text">Edit Recipe</string>
     <string name="publish_recipe_button">Publish Recipe</string>
+    <string name="add_to_my_recipes_button">Add to My Recipes</string>
 
     <!--recipe list page-->
     <string name="logout">Logout</string>

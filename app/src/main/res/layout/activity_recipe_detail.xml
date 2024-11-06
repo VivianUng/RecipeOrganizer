@@ -14,7 +14,9 @@
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/back_button_text" />
+            android:text="@string/back_button_text"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/nameTextView"
@@ -22,66 +24,90 @@
             android:layout_height="wrap_content"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            android:textColor="@color/colorPrimary"
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:id="@+id/categoryTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_marginTop="4dp" />
+            android:textColor="@color/colorSecondary"
+            android:layout_marginBottom="16dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ingredients"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="16dp"
+            android:padding="16dp"
+            android:background="@color/cardBackground"
+            android:orientation="vertical"
+            android:elevation="4dp"
+            android:backgroundTint="@color/cardBackground">
 
-        <TextView
-            android:id="@+id/ingredientsTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginTop="4dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ingredients"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/instructions"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            <TextView
+                android:id="@+id/ingredientsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/instructionsTextView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginTop="4dp" />
+            android:layout_marginBottom="16dp"
+            android:padding="16dp"
+            android:background="@color/cardBackground"
+            android:orientation="vertical"
+            android:elevation="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/instructions"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/instructionsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/editButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/edit_recipe_button_text"
-            android:layout_marginTop="16dp" />
+            android:background="@drawable/rounded_button"
+            android:layout_marginBottom="8dp"/>
 
         <Button
             android:id="@+id/publishButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/publish_recipe_button"
-            android:layout_marginTop="16dp" />
+            android:background="@drawable/rounded_button"
+            android:layout_marginBottom="8dp"/>
 
         <Button
             android:id="@+id/addToMyRecipesButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add to My Recipes"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="right"/>
+            android:text="@string/add_to_my_recipes_button"
+            android:background="@drawable/rounded_button"/>
 
     </LinearLayout>
 </ScrollView>
