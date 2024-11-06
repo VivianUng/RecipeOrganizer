@@ -56,10 +56,7 @@ public class SignupLoginActivity extends AppCompatActivity {
                         Toast.makeText(SignupLoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(SignupLoginActivity.this, RecipeListActivity.class));
                     } else {
-                        // Log error message for debugging
-                        String errorMessage = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
-                        Toast.makeText(SignupLoginActivity.this, "Authentication Failed: " + errorMessage, Toast.LENGTH_SHORT).show();
-                        Log.e("LoginError", errorMessage);
+                        Toast.makeText(SignupLoginActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -74,6 +71,11 @@ public class SignupLoginActivity extends AppCompatActivity {
             return;
         }
 
+        if(password.length() < 8){
+            Toast.makeText(SignupLoginActivity.this, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -81,14 +83,10 @@ public class SignupLoginActivity extends AppCompatActivity {
                         FirebaseUser user = auth.getCurrentUser();
                         String userId = user.getUid();
 
-
                         Toast.makeText(SignupLoginActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(SignupLoginActivity.this, RecipeListActivity.class));
                     } else {
-                        // Log error message for debugging
-                        String errorMessage = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
-                        Toast.makeText(SignupLoginActivity.this, "Sign Up Failed: " + errorMessage, Toast.LENGTH_SHORT).show();
-                        Log.e("SignUpError", errorMessage);
+                        Toast.makeText(SignupLoginActivity.this, "Sign Up Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
