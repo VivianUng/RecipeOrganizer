@@ -161,25 +161,39 @@ public class RecipeActivity extends AppCompatActivity {
                 Document doc = Jsoup.connect(recipeLink).get();
                 String recipeName = doc.title();
 
-                // Target <ul> that contains <li> elements with attributes containing "ingredient" in any of the following: id, name, aria-label
-                Element ingredientsElement = doc.select("ul:has(li[id*='ingredient'],li[class*='ingredient'], li[name*='ingredient'], li[aria-label*='ingredient'])").first();
+                // Target <ul> or <ol> that contains <li> elements with attributes containing
+                // "ingredient" in any of the following: id, name, aria-label
+                Element ingredientsElement = doc.select("ul:has(li[id*='ingredient']," +
+                        "li[class*='ingredient'], li[name*='ingredient'], " +
+                        "li[aria-label*='ingredient']), ol:has(li[id*='ingredient']," +
+                        "li[class*='ingredient'], li[name*='ingredient'], " +
+                        "li[aria-label*='ingredient'])").first();
 
-                // Target <ol> that contains <li> elements with id containing "instruction"
-                Element instructionsElement = doc.select("ol:has(li[id^='instruction'])").first();
+                // Target <ul> or <ol> that contains <li> elements with attributes containing
+                // "instruction" in any of the following: id, name, aria-label
+                Element instructionsElement = doc.select("ul:has(li[id*='instruction']," +
+                        "li[class*='instruction'], li[name*='instruction'], " +
+                        "li[aria-label*='instruction']), ol:has(li[id*='instruction']," +
+                        "li[class*='instruction'], li[name*='instruction'], " +
+                        "li[aria-label*='instruction'])").first();
 
                 runOnUiThread(() -> {
+                    // Set recipe name to the UI
+                    recipeNameEditText.setText(recipeName);
+
                     if (ingredientsElement != null) {
                         List<String> ingredients = new ArrayList<>();
                         // Extracting ingredient names from <li> elements
                         for (Element ingredient : ingredientsElement.select("li")) {
-                            // Extract the ingredient name from <strong> tags if they exist
-                            Element ingredientName = ingredient.selectFirst("strong");
-                            if (ingredientName != null) {
-                                ingredients.add(ingredientName.text().trim());
+                            StringBuilder ingredientText = new StringBuilder();
+                            // Concatenate all text within the <li>
+                            ingredientText.append(ingredient.text().trim());
+
+                            if (!ingredientText.toString().isEmpty()) {
+                                ingredients.add(ingredientText.toString());
                             }
                         }
-                        // Set recipe name and add ingredients to the UI
-                        recipeNameEditText.setText(recipeName);
+
                         for (String ingredient : ingredients) {
                             addIngredientField(ingredient);
                         }
@@ -190,11 +204,14 @@ public class RecipeActivity extends AppCompatActivity {
                     // Extract instructions
                     if (instructionsElement != null) {
                         List<String> instructions = new ArrayList<>();
-                        for (Element instruction : instructionsElement.select("li[id^='instruction']")) {
-                            // Use .ownText() to get only the main instruction text
-                            String instructionText = instruction.ownText();
-                            if (!instructionText.isEmpty()) {
-                                instructions.add(instructionText);
+                        for (Element instruction : instructionsElement.select("li")) {
+
+                            StringBuilder instructionText = new StringBuilder();
+                            // Concatenate all text within the <li>
+                            instructionText.append(instruction.text().trim());
+
+                            if (!instructionText.toString().isEmpty()) {
+                                instructions.add(instructionText.toString());
                             }
                         }
                         for (String instruction : instructions) {
@@ -250,6 +267,63 @@ public class RecipeActivity extends AppCompatActivity {
         instructionLayout.addView(deleteButton);
         instructionsLayout.addView(instructionLayout);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("recipeName", recipeNameEditText.getText().toString());
+        outState.putString("customCategory", customCategoryEditText.getText().toString());
+        outState.putString("recipeLink", recipeLinkEditText.getText().toString());
+
+        // Save dynamically added ingredients
+        ArrayList<String> ingredients = new ArrayList<>();
+        for (int i = 0; i < ingredientsLayout.getChildCount(); i++) {
+            View view = ingredientsLayout.getChildAt(i);
+            if (view instanceof LinearLayout) {
+                EditText ingredientEditText = (EditText) ((LinearLayout) view).getChildAt(0);
+                ingredients.add(ingredientEditText.getText().toString());
+            }
+        }
+        outState.putStringArrayList("ingredients", ingredients);
+
+        // Save dynamically added instructions
+        ArrayList<String> instructions = new ArrayList<>();
+        for (int i = 0; i < instructionsLayout.getChildCount(); i++) {
+            View view = instructionsLayout.getChildAt(i);
+            if (view instanceof LinearLayout) {
+                EditText instructionEditText = (EditText) ((LinearLayout) view).getChildAt(0);
+                instructions.add(instructionEditText.getText().toString());
+            }
+        }
+        outState.putStringArrayList("instructions", instructions);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        recipeNameEditText.setText(savedInstanceState.getString("recipeName"));
+        customCategoryEditText.setText(savedInstanceState.getString("customCategory"));
+        recipeLinkEditText.setText(savedInstanceState.getString("recipeLink"));
+
+        // Restore ingredients
+        ArrayList<String> ingredients = savedInstanceState.getStringArrayList("ingredients");
+        if (ingredients != null) {
+            ingredientsLayout.removeAllViews();  // Clear existing views
+            for (String ingredient : ingredients) {
+                addIngredientField(ingredient);
+            }
+        }
+
+        // Restore instructions
+        ArrayList<String> instructions = savedInstanceState.getStringArrayList("instructions");
+        if (instructions != null) {
+            instructionsLayout.removeAllViews();  // Clear existing views
+            for (String instruction : instructions) {
+                addInstructionField(instruction);
+            }
+        }
+    }
+
 
 
 }

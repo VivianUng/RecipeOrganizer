@@ -302,4 +302,58 @@ public class EditRecipeActivity extends AppCompatActivity {
             });
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("recipeName", recipeNameEditText.getText().toString());
+        outState.putString("customCategory", customCategoryEditText.getText().toString());
+
+        // Save dynamically added ingredients
+        ArrayList<String> ingredients = new ArrayList<>();
+        for (int i = 0; i < ingredientsLayout.getChildCount(); i++) {
+            View view = ingredientsLayout.getChildAt(i);
+            if (view instanceof LinearLayout) {
+                EditText ingredientEditText = (EditText) ((LinearLayout) view).getChildAt(0);
+                ingredients.add(ingredientEditText.getText().toString());
+            }
+        }
+        outState.putStringArrayList("ingredients", ingredients);
+
+        // Save dynamically added instructions
+        ArrayList<String> instructions = new ArrayList<>();
+        for (int i = 0; i < instructionsLayout.getChildCount(); i++) {
+            View view = instructionsLayout.getChildAt(i);
+            if (view instanceof LinearLayout) {
+                EditText instructionEditText = (EditText) ((LinearLayout) view).getChildAt(0);
+                instructions.add(instructionEditText.getText().toString());
+            }
+        }
+        outState.putStringArrayList("instructions", instructions);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        recipeNameEditText.setText(savedInstanceState.getString("recipeName"));
+        customCategoryEditText.setText(savedInstanceState.getString("customCategory"));
+
+        // Restore ingredients
+        ArrayList<String> ingredients = savedInstanceState.getStringArrayList("ingredients");
+        if (ingredients != null) {
+            ingredientsLayout.removeAllViews();  // Clear existing views
+            for (String ingredient : ingredients) {
+                addIngredientField(ingredient);
+            }
+        }
+
+        // Restore instructions
+        ArrayList<String> instructions = savedInstanceState.getStringArrayList("instructions");
+        if (instructions != null) {
+            instructionsLayout.removeAllViews();  // Clear existing views
+            for (String instruction : instructions) {
+                addInstructionField(instruction);
+            }
+        }
+    }
 }
