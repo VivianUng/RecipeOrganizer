@@ -10,18 +10,22 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TextView nameTextView, ingredientsTextView, instructionsTextView, categoryTextView;
-    private Button backButton, editButton, publishButton;
+    private Button backButton, editButton, publishButton, addToMyRecipesButton;
 
     // Declare ActivityResultLauncher
     private ActivityResultLauncher<Intent> editRecipeLauncher;
@@ -40,14 +44,21 @@ public class RecipeDetailActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
         editButton = findViewById(R.id.editButton);
         publishButton = findViewById(R.id.publishButton);
+        addToMyRecipesButton = findViewById(R.id.addToMyRecipesButton);
 
         // Get the isPublishedView flag from intent
         boolean isPublishedView = getIntent().getBooleanExtra("isPublishedView", false);
+        boolean fromMyRecipes = getIntent().getBooleanExtra("fromMyRecipes", false); // Check if accessed from My Recipes
 
         // Hide the buttons if viewed from published recipes
         if (isPublishedView) {
             editButton.setVisibility(View.GONE);
             publishButton.setVisibility(View.GONE);
+        }
+
+        // Hide the "Add to My Recipes" button if accessed from My Recipes
+        if (fromMyRecipes) {
+            addToMyRecipesButton.setVisibility(View.GONE);
         }
 
         // Initialize ActivityResultLauncher
@@ -97,6 +108,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 publishRecipe(recipe); // Publish the recipe
             }
         });
+
+        // Set up the click listener for the "Add to My Recipes" button
+        addToMyRecipesButton.setOnClickListener(v -> addToMyRecipes(recipe));
     }
 
     // Method to update button text
@@ -172,6 +186,49 @@ public class RecipeDetailActivity extends AppCompatActivity {
             formattedList.append(i + 1).append(". ").append(items.get(i)).append("\n");
         }
         return formattedList.toString().trim();
+    }
+
+
+    private void addToMyRecipes(Recipe recipe) {
+        DatabaseReference userRecipeRef = FirebaseDatabase.getInstance()
+                .getReference("recipes")
+                .child(FirebaseAuth.getInstance().getUid())
+                .child(recipe.getId());
+
+        // Check if the recipe already exists
+        userRecipeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Recipe already exists in the user's list
+                    Toast.makeText(RecipeDetailActivity.this, "Recipe already exists in My Recipes", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Create a new recipe object
+                    Recipe newRecipe = new Recipe(
+                            userRecipeRef.push().getKey(), // Generate a new ID
+                            recipe.getName(),
+                            recipe.getIngredients(),
+                            recipe.getInstructions(),
+                            recipe.getCategory(),
+                            false // Set isPublished to false
+                    );
+
+                    userRecipeRef.setValue(newRecipe).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(RecipeDetailActivity.this, "Added to My Recipes", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(RecipeDetailActivity.this, "Failed to add to My Recipes", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle possible errors here
+                Toast.makeText(RecipeDetailActivity.this, "Error accessing database: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

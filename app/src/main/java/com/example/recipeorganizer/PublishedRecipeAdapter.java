@@ -57,6 +57,7 @@ public class PublishedRecipeAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 Intent intent = new Intent(context, RecipeDetailActivity.class);
                 intent.putExtra("recipe", recipe);
                 intent.putExtra("isPublishedView", true); // Pass the flag
+                intent.putExtra("fromMyRecipes", false);
                 context.startActivity(intent);
             });
 

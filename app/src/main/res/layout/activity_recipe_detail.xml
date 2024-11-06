@@ -75,5 +75,13 @@
             android:text="@string/publish_recipe_button"
             android:layout_marginTop="16dp" />
 
+        <Button
+            android:id="@+id/addToMyRecipesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add to My Recipes"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="right"/>
+
     </LinearLayout>
 </ScrollView>

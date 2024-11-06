@@ -56,6 +56,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             recipeHolder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, RecipeDetailActivity.class);
                 intent.putExtra("recipe", recipe);
+                intent.putExtra("isPublishedView", false);
+                intent.putExtra("fromMyRecipes", true);
                 context.startActivity(intent);
             });
         }
