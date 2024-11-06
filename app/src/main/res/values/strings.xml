@@ -33,6 +33,7 @@
     <!--login page-->
     <string name="recipe_organizer">Recipe Organizer!</string>
     <string name="email_hint">Email</string>
+    <string name="password">Password</string>
     <string name="password_hint">Password</string>
     <string name="login_button_text">Login</string>
     <string name="dont_have_acc">Don\'t have an account? Sign Up now!</string>
@@ -46,7 +47,8 @@
     <string name="add_to_my_recipes_button">Add to My Recipes</string>
 
     <!--recipe list page-->
-    <string name="logout">Logout</string>
+    <string name="my_recipes_header">My Recipes</string>
+    <string name="profile">Profile</string>
     <string name="my_recipes">My Recipes</string>
     <string name="no_recipe">No recipes saved</string>
     <string name="add_recipe_button">Add Recipe</string>
@@ -57,6 +59,23 @@
     <string name="no_published_recipes">No Published Recipes</string>
     <string name="back_to_my_recipes_button">Back to My Recipes</string>
 
+<!--    Profile Page-->
+    <string name="logout_button">Logout</string>
+    <string name="exit_profile">Exit Profile</string>
+    <string name="my_profile_header">My Profile</string>
+    <string name="email">Email:</string>
+    <string name="change_pw_button">Change Password</string>
+
+<!--    Change Password page-->
+    <string name="change_pw_header">Change Password</string>
+    <string name="current_password_hint">Current Password</string>
+    <string name="new_password_hint">New Password</string>
+    <string name="confirm_new_password_hint">Confirm New Password</string>
+    <string name="change_password_button">Change Password</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="current_password_label">Current Password</string>
+    <string name="new_password_label">New Password</string>
+    <string name="confirm_new_password_label">Confirm New Password</string>
 
 
 </resources>

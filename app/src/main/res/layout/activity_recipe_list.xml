@@ -4,13 +4,13 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/logoutButton"
+        android:id="@+id/profileButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_margin="8dp"
-        android:background="@drawable/ic_logout"
-        android:contentDescription="@string/logout"
+        android:background="@drawable/ic_profile"
+        android:contentDescription="@string/profile"
         android:text="" />
 
     <TextView
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_below="@id/logoutButton"
+        android:layout_below="@id/profileButton"
         android:queryHint="Search Recipes"
         android:background="@drawable/search_view_background" />
 

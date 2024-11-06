@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Header Section with X Button and Title -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- X Button (Exit Profile) -->
+        <ImageButton
+            android:id="@+id/btn_exit"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="@string/exit_profile"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Header Title (My Profile) -->
+        <TextView
+            android:id="@+id/headerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_profile_header"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:layout_toEndOf="@id/btn_exit"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <!-- User Email Label -->
+    <TextView
+        android:id="@+id/tv_email_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/email"
+        android:textSize="16sp"
+        android:textColor="@color/colorSecondary"
+        android:layout_marginTop="24dp"/>
+
+    <!-- User Email Display -->
+    <TextView
+        android:id="@+id/tv_email"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="@string/email"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:background="@drawable/rounded_edit_text"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp" />
+
+
+    <!-- Change Password Button -->
+    <Button
+        android:id="@+id/change_pw_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/change_pw_button"
+        android:textColor="@color/colorPrimary"
+        android:backgroundTint="@android:color/white"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center"
+        android:elevation="4dp"/>
+
+    <!-- Logout Button -->
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/logout_button"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginTop="16dp"
+        android:elevation="6dp"
+        android:background="@drawable/rounded_button"/>
+
+</LinearLayout>

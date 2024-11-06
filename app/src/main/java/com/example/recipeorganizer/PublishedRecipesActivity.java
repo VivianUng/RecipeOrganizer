@@ -6,12 +6,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,7 +29,7 @@ public class PublishedRecipesActivity extends AppCompatActivity {
     private List<Recipe> publishedRecipeList;
     private DatabaseReference publishedRecipeRef;
     private SearchView searchView;
-    private Button logoutButton, backToMyRecipesButton;
+    private Button profileButton, backToMyRecipesButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +38,7 @@ public class PublishedRecipesActivity extends AppCompatActivity {
 
         publishedRecipesRecyclerView = findViewById(R.id.publishedRecipesRecyclerView);
         searchView = findViewById(R.id.searchView);
-        logoutButton = findViewById(R.id.logoutButton);
+        profileButton = findViewById(R.id.profileButton);
 
         // Initialize Firebase Database reference for published recipes
         publishedRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
@@ -74,8 +72,11 @@ public class PublishedRecipesActivity extends AppCompatActivity {
             }
         });
 
-        // Set up logout button click listener
-        logoutButton.setOnClickListener(v -> logoutUser());
+        // Set up profile button click listener
+        profileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(PublishedRecipesActivity.this, ProfileActivity.class);
+            startActivity(intent); // Navigates to the Profile screen
+        });
 
 
         // Set up view published recipes click listener
@@ -188,24 +189,4 @@ public class PublishedRecipesActivity extends AppCompatActivity {
         publishedRecipeAdapter.filterList(filteredList);
     }
 
-
-    private void logoutUser() {
-        // Create an AlertDialog
-        new AlertDialog.Builder(this)
-                .setTitle("Confirm Logout")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    // User clicked Yes, log them out
-                    FirebaseAuth.getInstance().signOut();
-                    Intent intent = new Intent(PublishedRecipesActivity.this, SignupLoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish(); // Close the current activity
-                })
-                .setNegativeButton("No", (dialog, which) -> {
-                    // User cancelled the dialog, just dismiss it
-                    dialog.dismiss();
-                })
-                .show(); // Show the dialog
-    }
 }

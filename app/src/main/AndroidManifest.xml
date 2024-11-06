@@ -27,6 +27,8 @@
         <activity android:name=".RecipeDetailActivity"/>
         <activity android:name=".EditRecipeActivity"/>
         <activity android:name=".PublishedRecipesActivity"/>
+        <activity android:name=".ProfileActivity"/>
+        <activity android:name=".ChangePasswordActivity"/>
 
     </application>
 

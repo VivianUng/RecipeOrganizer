@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +30,7 @@ public class RecipeListActivity extends AppCompatActivity {
     private List<Recipe> recipeList;
     private DatabaseReference recipeRef;
     private SearchView searchView;
-    private Button logoutButton, addRecipeButton, viewPublishedRecipesButton;
+    private Button profileButton, addRecipeButton, viewPublishedRecipesButton;
     private TextView categoryTextView; // Declare the category TextView
 
 
@@ -43,7 +42,7 @@ public class RecipeListActivity extends AppCompatActivity {
 
         recipeRecyclerView = findViewById(R.id.recipeRecyclerView);
         searchView = findViewById(R.id.searchView);
-        logoutButton = findViewById(R.id.logoutButton);
+        profileButton = findViewById(R.id.profileButton);
         addRecipeButton = findViewById(R.id.addRecipeButton);
 
         // Initialize Firebase Database reference
@@ -78,8 +77,11 @@ public class RecipeListActivity extends AppCompatActivity {
             }
         });
 
-        // Set up logout button click listener
-        logoutButton.setOnClickListener(v -> logoutUser());
+        // Set up profile button click listener
+        profileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(RecipeListActivity.this, ProfileActivity.class);
+            startActivity(intent); // Navigates to the Profile screen
+        });
 
         // Set up add recipe button click listener
         addRecipeButton.setOnClickListener(v -> {
@@ -195,24 +197,4 @@ public class RecipeListActivity extends AppCompatActivity {
         recipeAdapter.filterList(filteredList);
     }
 
-
-    private void logoutUser() {
-        // Create an AlertDialog
-        new AlertDialog.Builder(this)
-                .setTitle("Confirm Logout")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    // User clicked Yes, log them out
-                    FirebaseAuth.getInstance().signOut();
-                    Intent intent = new Intent(RecipeListActivity.this, SignupLoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish(); // Close the current activity
-                })
-                .setNegativeButton("No", (dialog, which) -> {
-                    // User cancelled the dialog, just dismiss it
-                    dialog.dismiss();
-                })
-                .show(); // Show the dialog
-    }
 }

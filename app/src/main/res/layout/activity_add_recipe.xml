@@ -23,6 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorSecondary"
             android:text="@string/scraper_prompt" />
 
         <EditText
@@ -47,6 +48,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorSecondary"
             android:text="@string/category" />
 
         <Spinner
@@ -76,6 +78,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorSecondary"
             android:text="@string/recipe_name" />
 
         <EditText
@@ -92,6 +95,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorSecondary"
             android:text="@string/ingredients" />
 
         <LinearLayout
@@ -110,6 +114,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorSecondary"
             android:text="@string/instructions" />
 
         <LinearLayout
