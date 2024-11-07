@@ -38,6 +38,7 @@
     <string name="dont_have_acc">Don\'t have an account? Sign Up now!</string>
     <string name="sign_up_button_text">Sign Up</string>
     <string name="forgot_password_button">Forgot Password?</string>
+    <string name="password_info">password_info</string>
 
 
     <!--recipe details page-->

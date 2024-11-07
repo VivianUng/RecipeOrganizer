@@ -1,14 +1,18 @@
 package com.example.recipeorganizer;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -40,8 +44,9 @@ public class SignupLoginActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.loginButton);
         Button signupButton = findViewById(R.id.signupButton);
         Button forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
+        ImageView passwordInfoIcon = findViewById(R.id.passwordInfoIcon);
 
-
+        passwordInfoIcon.setOnClickListener(v -> showPasswordInfoDialog());
         loginButton.setOnClickListener(v -> loginUser());
         signupButton.setOnClickListener(v -> signupUser());
         forgotPasswordButton.setOnClickListener(v -> forgotPassword());
@@ -99,8 +104,8 @@ public class SignupLoginActivity extends AppCompatActivity {
         }
 
         if (!PASSWORD_PATTERN.matcher(password).matches()) {
-            Toast.makeText(SignupLoginActivity.this, "Password must be at least 8 characters long, " +
-                    "include uppercase, lowercase, digit, and special character.", Toast.LENGTH_LONG).show();
+            Toast.makeText(SignupLoginActivity.this, "Password not strong enough", Toast.LENGTH_SHORT).show();
+            showPasswordInfoDialog();
             return;
         }
 
@@ -137,6 +142,19 @@ public class SignupLoginActivity extends AppCompatActivity {
                         Toast.makeText(SignupLoginActivity.this, "Error in sending password reset email", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void showPasswordInfoDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Password Requirements")
+                .setMessage("Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
 }

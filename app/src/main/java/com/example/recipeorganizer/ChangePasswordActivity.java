@@ -1,21 +1,36 @@
 package com.example.recipeorganizer;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.Button;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
     private EditText etCurrentPassword, etNewPassword, etConfirmPassword;
     private FirebaseAuth mAuth;
+
+    // Define password strength criteria
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile(
+            "^" +
+                    "(?=.*[0-9])" +         // at least one digit
+                    "(?=.*[a-z])" +         // at least one lowercase letter
+                    "(?=.*[A-Z])" +         // at least one uppercase letter
+                    "(?=.*[@#$%^&+=!_])" +  // at least one special character
+                    "(?=\\S+$)" +           // no whitespace
+                    ".{8,}" +               // at least 8 characters
+                    "$");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +46,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.et_confirm_password);
         Button btnChangePassword = findViewById(R.id.btn_change_password);
         Button btnCancel = findViewById(R.id.cancel_button);
+        ImageView passwordInfoIcon = findViewById(R.id.passwordInfoIcon);
+
+        passwordInfoIcon.setOnClickListener(v -> showPasswordInfoDialog());
 
         // Set button click listener
         btnChangePassword.setOnClickListener(view -> changePassword());
@@ -62,6 +80,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         if (!newPassword.equals(confirmPassword)) {
             etConfirmPassword.setError("Passwords do not match");
+            return;
+        }
+
+        if (!PASSWORD_PATTERN.matcher(newPassword).matches()) {
+            Toast.makeText(ChangePasswordActivity.this, "Password not strong enough", Toast.LENGTH_SHORT).show();
+            showPasswordInfoDialog();
             return;
         }
 
@@ -105,5 +129,18 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void showPasswordInfoDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Password Requirements")
+                .setMessage("Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 }
