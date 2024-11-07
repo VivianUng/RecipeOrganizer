@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -166,10 +168,21 @@ public class RecipeActivity extends AppCompatActivity {
                 });
     }
 
+    public static boolean isValidURL(String url) {
+        String regex = "^(https?://)?(www\\.)?([\\w-]+)\\.+[\\w]{2,}(/\\S*)?$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(url);
+        return matcher.matches();
+    }
+
     private void generateRecipeFromLink() {
         String recipeLink = recipeLinkEditText.getText().toString();
         if (recipeLink.isEmpty()) {
             Toast.makeText(this, "Please paste a recipe link", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!isValidURL(recipeLink)){
+            Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show();
             return;
         }
 
