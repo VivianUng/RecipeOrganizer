@@ -2,10 +2,11 @@ package com.example.recipeorganizer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.regex.Pattern;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,6 +17,17 @@ public class SignupLoginActivity extends AppCompatActivity {
     private EditText emailEditText, passwordEditText;
     private Button loginButton, signupButton, forgotPasswordButton;
     private FirebaseAuth auth;
+
+    // Define password strength criteria
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile(
+            "^" +
+                    "(?=.*[0-9])" +         // at least one digit
+                    "(?=.*[a-z])" +         // at least one lowercase letter
+                    "(?=.*[A-Z])" +         // at least one uppercase letter
+                    "(?=.*[@#$%^&+=!_])" +  // at least one special character
+                    "(?=\\S+$)" +           // no whitespace
+                    ".{8,}" +               // at least 8 characters
+                    "$");
 
 
     @Override
@@ -73,10 +85,12 @@ public class SignupLoginActivity extends AppCompatActivity {
             return;
         }
 
-        if(password.length() < 8){
-            Toast.makeText(SignupLoginActivity.this, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show();
+        if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            Toast.makeText(SignupLoginActivity.this, "Password must be at least 8 characters long, " +
+                    "include uppercase, lowercase, digit, and special character.", Toast.LENGTH_LONG).show();
             return;
         }
+
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
