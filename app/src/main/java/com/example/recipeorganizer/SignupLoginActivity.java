@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +47,13 @@ public class SignupLoginActivity extends AppCompatActivity {
         forgotPasswordButton.setOnClickListener(v -> forgotPassword());
     }
 
+    public static boolean isValidEmail(String email) {
+        String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
 
     private void loginUser() {
         String email = emailEditText.getText().toString();
@@ -54,6 +62,11 @@ public class SignupLoginActivity extends AppCompatActivity {
         // Validate input
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(SignupLoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(!isValidEmail(email)){
+            Toast.makeText(SignupLoginActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -80,6 +93,11 @@ public class SignupLoginActivity extends AppCompatActivity {
             return;
         }
 
+        if(!isValidEmail(email)){
+            Toast.makeText(SignupLoginActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!PASSWORD_PATTERN.matcher(password).matches()) {
             Toast.makeText(SignupLoginActivity.this, "Password must be at least 8 characters long, " +
                     "include uppercase, lowercase, digit, and special character.", Toast.LENGTH_LONG).show();
@@ -103,6 +121,11 @@ public class SignupLoginActivity extends AppCompatActivity {
 
         if (email.isEmpty()) {
             Toast.makeText(SignupLoginActivity.this, "Please enter your email address", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(!isValidEmail(email)){
+            Toast.makeText(SignupLoginActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
             return;
         }
 

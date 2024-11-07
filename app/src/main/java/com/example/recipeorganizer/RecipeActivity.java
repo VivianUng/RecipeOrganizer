@@ -293,8 +293,7 @@ public class RecipeActivity extends AppCompatActivity {
                 userCategoriesList.add("Others");
 
                 // Set the adapter for the Spinner
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeActivity.this, android.R.layout.simple_spinner_item, userCategoriesList);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeActivity.this, R.layout.spinner_item, userCategoriesList);
                 categorySpinner.setAdapter(adapter);
 
                 // Now we can safely set the category selection

@@ -34,7 +34,6 @@
             android:padding="16dp"
             android:popupBackground="@android:color/white"
             android:background="@drawable/rounded_spinner_background"
-            android:textColor="@android:color/darker_gray"
             android:spinnerMode="dropdown" />
 
         <EditText

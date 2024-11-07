@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@android:color/white" />
-    <corners android:radius="12dp" />
-    <stroke android:width="1dp" android:color="@android:color/darker_gray" />
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Rounded background with border -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <corners android:radius="12dp" />
+            <stroke android:width="1dp" android:color="@android:color/darker_gray" />
+        </shape>
+    </item>
+
+    <!-- Dropdown arrow icon with right margin -->
+    <item
+        android:drawable="@android:drawable/arrow_down_float"
+        android:gravity="end|center_vertical"
+        android:right="12dp" />
+</layer-list>
