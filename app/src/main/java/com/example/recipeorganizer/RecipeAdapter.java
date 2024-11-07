@@ -24,7 +24,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.recipeList = recipeList;
     }
 
-    @NonNull
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
@@ -35,7 +35,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 24)); // Set height for spacing
             return new SpacerViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipe_list_item, parent, false); // Updated this line
             return new RecipeViewHolder(view);
         }
     }
@@ -48,10 +48,16 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             headerHolder.categoryTextView.setText(category);
             headerHolder.categoryTextView.setTextSize(20); // Larger font size for headers
             headerHolder.categoryTextView.setTypeface(null, android.graphics.Typeface.BOLD); // Bold text
-        } else if (holder instanceof RecipeViewHolder) {
+
+        }
+        else if (holder instanceof RecipeViewHolder) {
             RecipeViewHolder recipeHolder = (RecipeViewHolder) holder;
             Recipe recipe = recipeList.get(position);
             recipeHolder.nameTextView.setText(recipe.getName());
+
+            // Set the published status text
+            String publishedStatus = recipe.isPublished() ? "Published" : "Not Published";
+            recipeHolder.publishedStatusTextView.setText(publishedStatus);
 
             recipeHolder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, RecipeDetailActivity.class);
@@ -84,12 +90,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
+
     static class RecipeViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
+        TextView publishedStatusTextView; // Added this line
 
         public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameTextView = itemView.findViewById(android.R.id.text1);
+            nameTextView = itemView.findViewById(R.id.nameTextView);
+            publishedStatusTextView = itemView.findViewById(R.id.publishedStatusTextView); // Added this line
         }
     }
 

@@ -173,16 +173,61 @@ public class PublishedRecipesActivity extends AppCompatActivity {
 
     private void filterPublishedRecipes(String query) {
         List<Recipe> filteredList = new ArrayList<>();
+
+        // Temporary map to categorize recipes
+        HashMap<String, List<Recipe>> categorizedRecipes = new HashMap<>();
+
+        // Group recipes by category
         for (Recipe recipe : publishedRecipeList) {
-            String name = recipe.getName();
-            String category = recipe.getCategory();
-            boolean nameMatches = name != null && name.toLowerCase().contains(query.toLowerCase());
-            boolean categoryMatches = category != null && category.toLowerCase().contains(query.toLowerCase());
-            if (nameMatches || categoryMatches) {
-                filteredList.add(recipe);
+            String category = recipe.getCategory() != null ? recipe.getCategory() : "Uncategorized";
+            if (!categorizedRecipes.containsKey(category)) {
+                categorizedRecipes.put(category, new ArrayList<>());
+            }
+            categorizedRecipes.get(category).add(recipe);
+        }
+
+        // Process each category to see if it contains any matching recipes
+        for (String category : categorizedRecipes.keySet()) {
+            List<Recipe> categoryRecipes = categorizedRecipes.get(category);
+            List<Recipe> matchingRecipes = new ArrayList<>();
+
+            // Check for matches within this category
+            for (Recipe recipe : categoryRecipes) {
+                if (recipe.getName() == null) {
+                    // If it's a header or spacer, ignore for matching purposes
+                    continue;
+                }
+
+                boolean nameMatches = recipe.getName().toLowerCase().contains(query.toLowerCase());
+                boolean categoryMatches = recipe.getCategory().toLowerCase().contains(query.toLowerCase());
+
+                if (nameMatches || categoryMatches) {
+                    matchingRecipes.add(recipe);
+                }
+            }
+
+            // Only add category header and matching recipes if there's at least one match
+            if (!matchingRecipes.isEmpty()) {
+                // Add category header
+                Recipe header = new Recipe();
+                header.setCategory(category);  // Set category name
+                header.setName(null);  // Set name as null to indicate it's a header
+                filteredList.add(header);
+
+                // Add all matching recipes under this header
+                filteredList.addAll(matchingRecipes);
+
+                // Add a spacer after each category
+                Recipe spacer = new Recipe();
+                spacer.setName(null);
+                spacer.setCategory(null);
+                filteredList.add(spacer);
             }
         }
+
+        // Refresh the adapter with the new filtered list
         publishedRecipeAdapter.filterList(filteredList);
     }
+
 
 }
