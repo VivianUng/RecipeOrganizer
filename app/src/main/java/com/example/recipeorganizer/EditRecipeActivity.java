@@ -24,13 +24,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class EditRecipeActivity extends AppCompatActivity {
 
     private EditText recipeNameEditText, customCategoryEditText;
     private Spinner categorySpinner;
     private LinearLayout ingredientsLayout, instructionsLayout;
-    private Button addIngredientButton, addInstructionButton, updateRecipeButton, deleteButton, cancelButton;
 
     private String recipeId;
     private DatabaseReference recipeRef;
@@ -48,11 +48,11 @@ public class EditRecipeActivity extends AppCompatActivity {
         customCategoryEditText = findViewById(R.id.customCategoryEditText);
         ingredientsLayout = findViewById(R.id.ingredientsLayout);
         instructionsLayout = findViewById(R.id.instructionsLayout);
-        addIngredientButton = findViewById(R.id.addIngredientButton);
-        addInstructionButton = findViewById(R.id.addInstructionButton);
-        updateRecipeButton = findViewById(R.id.updateRecipeButton);
-        deleteButton = findViewById(R.id.deleteButton);
-        cancelButton = findViewById(R.id.cancelButton);
+        Button addIngredientButton = findViewById(R.id.addIngredientButton);
+        Button addInstructionButton = findViewById(R.id.addInstructionButton);
+        Button updateRecipeButton = findViewById(R.id.updateRecipeButton);
+        Button deleteButton = findViewById(R.id.deleteButton);
+        Button cancelButton = findViewById(R.id.cancelButton);
 
         recipeRef = FirebaseDatabase.getInstance().getReference("recipes");
 
@@ -84,7 +84,7 @@ public class EditRecipeActivity extends AppCompatActivity {
     }
 
     private void fetchUserCategories() {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("category_preference").child(userId);
 
         categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -99,7 +99,6 @@ public class EditRecipeActivity extends AppCompatActivity {
                     // Retrieve the categories as a List
                     List<String> userCategories = new ArrayList<>();
 
-                    // Assuming categories are stored as a List in Firebase
                     for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
                         // Get the value as a List<String>
                         List<String> categories = (List<String>) categorySnapshot.getValue();
@@ -210,7 +209,7 @@ public class EditRecipeActivity extends AppCompatActivity {
 
     // Method to save a new custom category
     private void saveCustomCategory(String customCategory) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("category_preference").child(userId);
 
         categoryRef.child("categories").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -222,6 +221,7 @@ public class EditRecipeActivity extends AppCompatActivity {
                 }
 
                 // Add the new custom category if it's not already in the list
+                assert currentCategories != null;
                 if (!currentCategories.contains(customCategory) && !customCategory.isEmpty()) {
                     currentCategories.add(customCategory);
                     categoryRef.child("categories").setValue(currentCategories).addOnCompleteListener(task -> {
@@ -304,7 +304,7 @@ public class EditRecipeActivity extends AppCompatActivity {
             return;
         }
 
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         // Fetch the current recipe to retain the published status
         recipeRef.child(userId).child(recipeId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -357,7 +357,7 @@ public class EditRecipeActivity extends AppCompatActivity {
 
     private void deleteRecipe() {
         if (recipeId != null) {
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
             // Remove the recipe from the user's private list
             recipeRef.child(userId).child(recipeId).removeValue().addOnCompleteListener(task -> {

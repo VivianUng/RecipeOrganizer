@@ -10,10 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class ChangePasswordActivity extends AppCompatActivity {
 
     private EditText etCurrentPassword, etNewPassword, etConfirmPassword;
-    private Button btnChangePassword, btnCancel;
     private FirebaseAuth mAuth;
 
     @Override
@@ -28,8 +29,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
         etCurrentPassword = findViewById(R.id.et_current_password);
         etNewPassword = findViewById(R.id.et_new_password);
         etConfirmPassword = findViewById(R.id.et_confirm_password);
-        btnChangePassword = findViewById(R.id.btn_change_password);
-        btnCancel = findViewById(R.id.cancel_button);
+        Button btnChangePassword = findViewById(R.id.btn_change_password);
+        Button btnCancel = findViewById(R.id.cancel_button);
 
         // Set button click listener
         btnChangePassword.setOnClickListener(view -> changePassword());
@@ -79,7 +80,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         // Re-authenticate the user before updating the password
         if (user != null) {
             // Assuming email and currentPassword for re-authentication
-            mAuth.signInWithEmailAndPassword(user.getEmail(), currentPassword)
+            mAuth.signInWithEmailAndPassword(Objects.requireNonNull(user.getEmail()), currentPassword)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             updatePassword(newPassword);  // Password update after successful re-authentication

@@ -28,8 +28,6 @@ public class PublishedRecipesActivity extends AppCompatActivity {
     private PublishedRecipeAdapter publishedRecipeAdapter;
     private List<Recipe> publishedRecipeList;
     private DatabaseReference publishedRecipeRef;
-    private SearchView searchView;
-    private Button profileButton, backToMyRecipesButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +35,8 @@ public class PublishedRecipesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_published_recipes);
 
         publishedRecipesRecyclerView = findViewById(R.id.publishedRecipesRecyclerView);
-        searchView = findViewById(R.id.searchView);
-        profileButton = findViewById(R.id.profileButton);
+        SearchView searchView = findViewById(R.id.searchView);
+        Button profileButton = findViewById(R.id.profileButton);
 
         // Initialize Firebase Database reference for published recipes
         publishedRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
@@ -80,7 +78,7 @@ public class PublishedRecipesActivity extends AppCompatActivity {
 
 
         // Set up view published recipes click listener
-        backToMyRecipesButton = findViewById(R.id.backToMyRecipesButton);
+        Button backToMyRecipesButton = findViewById(R.id.backToMyRecipesButton);
         backToMyRecipesButton.setOnClickListener(v -> {
             Intent intent = new Intent(PublishedRecipesActivity.this, RecipeListActivity.class);
             startActivity(intent); // Navigates to the My Recipes screen
@@ -98,10 +96,8 @@ public class PublishedRecipesActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            publishedRecipeList = (List<Recipe>) savedInstanceState.getSerializable("publishedRecipeList");
-            publishedRecipeAdapter.updateList(publishedRecipeList);
-        }
+        publishedRecipeList = (List<Recipe>) savedInstanceState.getSerializable("publishedRecipeList");
+        publishedRecipeAdapter.updateList(publishedRecipeList);
     }
 
     private void fetchPublishedRecipes() {

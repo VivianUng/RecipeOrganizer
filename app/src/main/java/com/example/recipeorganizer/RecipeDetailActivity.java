@@ -21,11 +21,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+import java.util.Objects;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TextView nameTextView, ingredientsTextView, instructionsTextView, categoryTextView;
-    private Button backButton, editButton, publishButton, addToMyRecipesButton;
+    private Button publishButton;
 
     // Declare ActivityResultLauncher
     private ActivityResultLauncher<Intent> editRecipeLauncher;
@@ -41,10 +42,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
         ingredientsTextView = findViewById(R.id.ingredientsTextView);
         instructionsTextView = findViewById(R.id.instructionsTextView);
         categoryTextView = findViewById(R.id.categoryTextView);
-        backButton = findViewById(R.id.backButton);
-        editButton = findViewById(R.id.editButton);
+        Button backButton = findViewById(R.id.backButton);
+        Button editButton = findViewById(R.id.editButton);
         publishButton = findViewById(R.id.publishButton);
-        addToMyRecipesButton = findViewById(R.id.addToMyRecipesButton);
+        Button addToMyRecipesButton = findViewById(R.id.addToMyRecipesButton);
 
         // Get the isPublishedView flag from intent
         boolean isPublishedView = getIntent().getBooleanExtra("isPublishedView", false);
@@ -102,23 +103,28 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         // Set up the publish button click listener
         publishButton.setOnClickListener(v -> {
-            if (recipe.isPublished()) {
-                unpublishRecipe(recipe); // Unpublish the recipe
-            } else {
-                publishRecipe(recipe); // Publish the recipe
+            if(recipe != null) {
+                if (recipe.isPublished()) {
+                    unpublishRecipe(recipe); // Unpublish the recipe
+                } else {
+                    publishRecipe(recipe); // Publish the recipe
+                }
             }
         });
 
         // Set up the click listener for the "Add to My Recipes" button
-        addToMyRecipesButton.setOnClickListener(v -> addToMyRecipes(recipe));
+        addToMyRecipesButton.setOnClickListener(v -> {
+            assert recipe != null;
+            addToMyRecipes(recipe);
+        });
     }
 
     // Method to update button text
     private void updatePublishButton(boolean isPublished) {
         if (isPublished) {
-            publishButton.setText("Unpublish Recipe");
+            publishButton.setText(R.string.unpublish_recipe_button);
         } else {
-            publishButton.setText("Publish Recipe");
+            publishButton.setText(R.string.publish_recipe_button);
         }
     }
 
@@ -129,7 +135,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Update the user's private recipe reference to set `published` to true
         DatabaseReference userRecipeRef = FirebaseDatabase.getInstance()
                 .getReference("recipes")
-                .child(FirebaseAuth.getInstance().getUid()) // Replace with userId if you store it separately
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())) // Replace with userId if you store it separately
                 .child(recipe.getId());
 
         userRecipeRef.child("published").setValue(true).addOnCompleteListener(task1 -> {
@@ -162,7 +168,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 // If successful, update the user's private recipe to set `published` to false
                 DatabaseReference userRecipeRef = FirebaseDatabase.getInstance()
                         .getReference("recipes")
-                        .child(FirebaseAuth.getInstance().getUid())
+                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                         .child(recipe.getId());
 
                 userRecipeRef.child("published").setValue(false).addOnCompleteListener(task2 -> {
@@ -189,12 +195,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void addToMyRecipes(Recipe recipe) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         DatabaseReference recipeRef = FirebaseDatabase.getInstance().getReference("recipes");
 
         DatabaseReference userRecipeRef = FirebaseDatabase.getInstance()
                 .getReference("recipes")
-                .child(FirebaseAuth.getInstance().getUid())
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                 .child(recipe.getId());
 
         // Check if the recipe already exists

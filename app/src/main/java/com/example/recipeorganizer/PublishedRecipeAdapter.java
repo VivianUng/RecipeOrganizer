@@ -13,7 +13,7 @@ import java.util.List;
 public class PublishedRecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Recipe> publishedRecipeList;
-    private Context context;
+    private final Context context;
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;

@@ -10,12 +10,10 @@ import java.util.regex.Pattern;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class SignupLoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
-    private Button loginButton, signupButton, forgotPasswordButton;
     private FirebaseAuth auth;
 
     // Define password strength criteria
@@ -38,9 +36,9 @@ public class SignupLoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
-        loginButton = findViewById(R.id.loginButton);
-        signupButton = findViewById(R.id.signupButton);
-        forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
+        Button loginButton = findViewById(R.id.loginButton);
+        Button signupButton = findViewById(R.id.signupButton);
+        Button forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
 
 
         loginButton.setOnClickListener(v -> loginUser());
@@ -62,9 +60,6 @@ public class SignupLoginActivity extends AppCompatActivity {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // User logged in successfully, get the user UID
-                        FirebaseUser user = auth.getCurrentUser();
-                        String userId = user.getUid();
 
                         // Navigate to RecipeListActivity
                         Toast.makeText(SignupLoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
@@ -95,10 +90,6 @@ public class SignupLoginActivity extends AppCompatActivity {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // User signed up successfully, get the user UID
-                        FirebaseUser user = auth.getCurrentUser();
-                        String userId = user.getUid();
-
                         Toast.makeText(SignupLoginActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(SignupLoginActivity.this, RecipeListActivity.class));
                     } else {

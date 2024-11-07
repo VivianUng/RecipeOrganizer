@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class RecipeListActivity extends AppCompatActivity {
 
@@ -29,11 +29,6 @@ public class RecipeListActivity extends AppCompatActivity {
     private RecipeAdapter recipeAdapter;
     private List<Recipe> recipeList;
     private DatabaseReference recipeRef;
-    private SearchView searchView;
-    private Button profileButton, addRecipeButton, viewPublishedRecipesButton;
-    private TextView categoryTextView; // Declare the category TextView
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +36,9 @@ public class RecipeListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_list);
 
         recipeRecyclerView = findViewById(R.id.recipeRecyclerView);
-        searchView = findViewById(R.id.searchView);
-        profileButton = findViewById(R.id.profileButton);
-        addRecipeButton = findViewById(R.id.addRecipeButton);
+        SearchView searchView = findViewById(R.id.searchView);
+        Button profileButton = findViewById(R.id.profileButton);
+        Button addRecipeButton = findViewById(R.id.addRecipeButton);
 
         // Initialize Firebase Database reference
         recipeRef = FirebaseDatabase.getInstance().getReference("recipes");
@@ -90,7 +85,7 @@ public class RecipeListActivity extends AppCompatActivity {
         });
 
         // Set up view published recipes click listener
-        viewPublishedRecipesButton = findViewById(R.id.viewPublishedRecipesButton);
+        Button viewPublishedRecipesButton = findViewById(R.id.viewPublishedRecipesButton);
         viewPublishedRecipesButton.setOnClickListener(v -> {
                     Intent intent = new Intent(RecipeListActivity.this, PublishedRecipesActivity.class);
                     startActivity(intent); // Navigates to the Published Recipes screen
@@ -107,15 +102,13 @@ public class RecipeListActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            recipeList = (List<Recipe>) savedInstanceState.getSerializable("recipeList");
-            recipeAdapter.updateList(recipeList); // Update the adapter with the restored list
-        }
+        recipeList = (List<Recipe>) savedInstanceState.getSerializable("recipeList");
+        recipeAdapter.updateList(recipeList); // Update the adapter with the restored list
     }
 
 
     private void fetchRecipes() {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         recipeRef.child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

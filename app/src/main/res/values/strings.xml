@@ -44,7 +44,9 @@
     <string name="back_button_text">Back</string>
     <string name="edit_recipe_button_text">Edit Recipe</string>
     <string name="publish_recipe_button">Publish Recipe</string>
+    <string name="unpublish_recipe_button">Unpublish Recipe</string>
     <string name="add_to_my_recipes_button">Add to My Recipes</string>
+
 
     <!--recipe list page-->
     <string name="my_recipes_header">My Recipes</string>

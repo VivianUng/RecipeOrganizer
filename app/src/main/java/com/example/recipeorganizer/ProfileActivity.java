@@ -11,11 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ProfileActivity extends AppCompatActivity {
+import java.util.Objects;
 
-    private TextView tvEmail;
-    private Button changePwButton, btnLogout;
-    private ImageButton btnExit;
+public class ProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +21,13 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         // Initialize UI elements
-        tvEmail = findViewById(R.id.tv_email);
-        changePwButton = findViewById(R.id.change_pw_button);
-        btnLogout = findViewById(R.id.btn_logout);
-        btnExit = findViewById(R.id.btn_exit);
+        TextView tvEmail = findViewById(R.id.tv_email);
+        Button changePwButton = findViewById(R.id.change_pw_button);
+        Button btnLogout = findViewById(R.id.btn_logout);
+        ImageButton btnExit = findViewById(R.id.btn_exit);
 
         // Set the current user's email
-        tvEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        tvEmail.setText(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail());
 
         // Handle 'Change Password' button
         // Set up the edit button click listener
