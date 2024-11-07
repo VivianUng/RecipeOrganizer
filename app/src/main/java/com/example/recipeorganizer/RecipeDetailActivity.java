@@ -188,8 +188,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
         return formattedList.toString().trim();
     }
 
-
     private void addToMyRecipes(Recipe recipe) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference recipeRef = FirebaseDatabase.getInstance().getReference("recipes");
+
         DatabaseReference userRecipeRef = FirebaseDatabase.getInstance()
                 .getReference("recipes")
                 .child(FirebaseAuth.getInstance().getUid())
@@ -205,7 +207,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 } else {
                     // Create a new recipe object
                     Recipe newRecipe = new Recipe(
-                            userRecipeRef.push().getKey(), // Generate a new ID
+                            recipeRef.push().getKey(), // Generate a new ID
                             recipe.getName(),
                             recipe.getIngredients(),
                             recipe.getInstructions(),
@@ -213,7 +215,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                             false // Set isPublished to false
                     );
 
-                    userRecipeRef.setValue(newRecipe).addOnCompleteListener(task -> {
+                    recipeRef.child(userId).child(newRecipe.getId()).setValue(newRecipe).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(RecipeDetailActivity.this, "Added to My Recipes", Toast.LENGTH_SHORT).show();
                         } else {
@@ -230,7 +232,5 @@ public class RecipeDetailActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
 }

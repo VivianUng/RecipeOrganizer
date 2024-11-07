@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EditRecipeActivity extends AppCompatActivity {
@@ -32,6 +34,9 @@ public class EditRecipeActivity extends AppCompatActivity {
 
     private String recipeId;
     private DatabaseReference recipeRef;
+
+    // Member variable to hold user categories
+    private List<String> userCategoriesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,28 +56,8 @@ public class EditRecipeActivity extends AppCompatActivity {
 
         recipeRef = FirebaseDatabase.getInstance().getReference("recipes");
 
-        // Get the recipe data from the Intent
-        Recipe recipe = (Recipe) getIntent().getSerializableExtra("recipe");
-        if (recipe != null) {
-            recipeId = recipe.getId();
-            recipeNameEditText.setText(recipe.getName());
-            String category = recipe.getCategory();
-
-            // Check if the saved category is within the preset categories
-            if (isCategoryPreset(category)) {
-                categorySpinner.setSelection(getCategoryPosition(category));
-                customCategoryEditText.setVisibility(View.GONE);
-            } else {
-                // If not, set it as a custom category
-                customCategoryEditText.setText(category);
-                customCategoryEditText.setVisibility(View.VISIBLE);
-                // Set the spinner to the last position (assuming "Other" is the last item)
-                categorySpinner.setSelection(categorySpinner.getAdapter().getCount() - 1);
-            }
-
-            populateFields(recipe.getIngredients(), ingredientsLayout);
-            populateFields(recipe.getInstructions(), instructionsLayout);
-        }
+        // Fetch user categories to populate the spinner
+        fetchUserCategories();
 
         addIngredientButton.setOnClickListener(v -> addIngredientField(""));
         addInstructionButton.setOnClickListener(v -> addInstructionField(""));
@@ -84,7 +69,7 @@ public class EditRecipeActivity extends AppCompatActivity {
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (position == categorySpinner.getAdapter().getCount() - 1) { // custom option as last option
+                if (position == categorySpinner.getAdapter().getCount() - 1) { // "Others" option
                     customCategoryEditText.setVisibility(View.VISIBLE);
                 } else {
                     customCategoryEditText.setVisibility(View.GONE);
@@ -98,26 +83,81 @@ public class EditRecipeActivity extends AppCompatActivity {
         });
     }
 
-    private boolean isCategoryPreset(String category) {
-        String[] categories = getResources().getStringArray(R.array.category_array);
-        for (String presetCategory : categories) {
-            if (presetCategory.equals(category)) {
-                return true;
+    private void fetchUserCategories() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("category_preference").child(userId);
+
+        categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userCategoriesList = new ArrayList<>();
+                // Add default categories
+                userCategoriesList.addAll(Arrays.asList(getResources().getStringArray(R.array.category_array)));
+
+                // Check if the user has custom preferences
+                if (dataSnapshot.exists()) {
+                    // Retrieve the categories as a List
+                    List<String> userCategories = new ArrayList<>();
+
+                    // Assuming categories are stored as a List in Firebase
+                    for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
+                        // Get the value as a List<String>
+                        List<String> categories = (List<String>) categorySnapshot.getValue();
+                        if (categories != null) {
+                            userCategories.addAll(categories); // Add all categories to the userCategories list
+                        }
+                    }
+
+                    // Add the list of user categories to the main list
+                    userCategoriesList.addAll(userCategories);
+                }
+
+                // Always add "Others" as the last option
+                userCategoriesList.add("Others");
+
+                // Set the adapter for the Spinner
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(EditRecipeActivity.this, android.R.layout.simple_spinner_item, userCategoriesList);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                categorySpinner.setAdapter(adapter);
+
+                // Now we can safely set the category selection
+                setCategorySelection();
             }
-        }
-        return false;
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(EditRecipeActivity.this, "Failed to fetch categories", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private int getCategoryPosition(String category) {
-        String[] categories = getResources().getStringArray(R.array.category_array);
-        for (int i = 0; i < categories.length; i++) {
-            if (categories[i].equals(category)) {
-                return i;
+    private void setCategorySelection() {
+        // Get the recipe data from the Intent
+        Recipe recipe = (Recipe) getIntent().getSerializableExtra("recipe");
+        if (recipe != null) {
+            recipeId = recipe.getId();
+            recipeNameEditText.setText(recipe.getName());
+            String category = recipe.getCategory();
+
+            if (userCategoriesList.contains(category)) {
+                int position = userCategoriesList.indexOf(category);
+                categorySpinner.setSelection(position); // Select user category
+                customCategoryEditText.setVisibility(View.GONE); // Hide custom category input
+            } else {
+                customCategoryEditText.setText(category);
+                customCategoryEditText.setVisibility(View.VISIBLE); // Show custom category input
+                categorySpinner.setSelection(userCategoriesList.indexOf("Others")); // Select "Others"
+            }
+
+            // Populate ingredients and instructions
+            if (recipe.getIngredients() != null) {
+                populateFields(recipe.getIngredients(), ingredientsLayout);
+            }
+            if (recipe.getInstructions() != null) {
+                populateFields(recipe.getInstructions(), instructionsLayout);
             }
         }
-        return 0; // Default to first category if not found
     }
-
 
     private void populateFields(List<String> data, LinearLayout layout) {
         for (String item : data) {
@@ -168,11 +208,46 @@ public class EditRecipeActivity extends AppCompatActivity {
     }
 
 
+    // Method to save a new custom category
+    private void saveCustomCategory(String customCategory) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("category_preference").child(userId);
+
+        categoryRef.child("categories").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<String> currentCategories = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    currentCategories = (List<String>) dataSnapshot.getValue();
+                }
+
+                // Add the new custom category if it's not already in the list
+                if (!currentCategories.contains(customCategory) && !customCategory.isEmpty()) {
+                    currentCategories.add(customCategory);
+                    categoryRef.child("categories").setValue(currentCategories).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(EditRecipeActivity.this, "Category saved!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(EditRecipeActivity.this, "Failed to save category", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(EditRecipeActivity.this, "Failed to fetch current categories", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     private void updateRecipe() {
         String name = recipeNameEditText.getText().toString();
         String category = categorySpinner.getSelectedItem().toString();
+        final String selectedCategory = category;
 
-        if (category.equals("Other")) {
+        if (category.equals("Others")) {
             String customCategory = customCategoryEditText.getText().toString();
             if (!customCategory.isEmpty()) {
                 category = customCategory;
@@ -183,6 +258,7 @@ public class EditRecipeActivity extends AppCompatActivity {
         }
 
         final String finalCategory = category;
+
 
         List<String> ingredients = new ArrayList<>();
         List<String> instructions = new ArrayList<>();
@@ -242,6 +318,10 @@ public class EditRecipeActivity extends AppCompatActivity {
                     // Update the local recipe in the user's private list
                     recipeRef.child(userId).child(recipeId).setValue(updatedRecipe).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+                            // Save custom category only if it's new
+                            if ("Others".equals(selectedCategory)) {
+                                saveCustomCategory(finalCategory);
+                            }
                             if (isPublished) {
                                 DatabaseReference publicRecipeRef = FirebaseDatabase.getInstance().getReference("public_recipes");
                                 publicRecipeRef.child(recipeId).setValue(updatedRecipe).addOnCompleteListener(publicTask -> {

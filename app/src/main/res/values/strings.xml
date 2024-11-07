@@ -27,7 +27,6 @@
         <item>Dessert</item>
         <item>Baking</item>
         <item>Snacks</item>
-        <item>Other</item> <!-- 'Other' option to allow custom input -->
     </string-array>
 
     <!--login page-->
