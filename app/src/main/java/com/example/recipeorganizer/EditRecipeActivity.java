@@ -35,7 +35,6 @@ public class EditRecipeActivity extends AppCompatActivity {
     private String recipeId;
     private DatabaseReference recipeRef;
 
-    // Member variable to hold user categories
     private List<String> userCategoriesList;
 
     @Override
@@ -119,7 +118,6 @@ public class EditRecipeActivity extends AppCompatActivity {
 
                 categorySpinner.setAdapter(adapter);
 
-                // Now we can safely set the category selection
                 setCategorySelection();
             }
 

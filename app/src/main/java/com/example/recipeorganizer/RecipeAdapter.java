@@ -93,12 +93,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     static class RecipeViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
-        TextView publishedStatusTextView; // Added this line
+        TextView publishedStatusTextView;
 
         public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.nameTextView);
-            publishedStatusTextView = itemView.findViewById(R.id.publishedStatusTextView); // Added this line
+            publishedStatusTextView = itemView.findViewById(R.id.publishedStatusTextView);
         }
     }
 

@@ -135,7 +135,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Update the user's private recipe reference to set `published` to true
         DatabaseReference userRecipeRef = FirebaseDatabase.getInstance()
                 .getReference("recipes")
-                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())) // Replace with userId if you store it separately
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                 .child(recipe.getId());
 
         userRecipeRef.child("published").setValue(true).addOnCompleteListener(task1 -> {

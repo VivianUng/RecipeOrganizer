@@ -65,12 +65,14 @@ public class SignupLoginActivity extends AppCompatActivity {
 
         // Validate input
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(SignupLoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupLoginActivity.this, "Please fill all fields",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
         if(!isValidEmail(email)){
-            Toast.makeText(SignupLoginActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupLoginActivity.this, "Invalid email",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -79,10 +81,13 @@ public class SignupLoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
 
                         // Navigate to RecipeListActivity
-                        Toast.makeText(SignupLoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(SignupLoginActivity.this, RecipeListActivity.class));
+                        Toast.makeText(SignupLoginActivity.this, "Login Successful",
+                                Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(SignupLoginActivity.this,
+                                RecipeListActivity.class));
                     } else {
-                        Toast.makeText(SignupLoginActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupLoginActivity.this, "Email or password incorrect",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -93,17 +98,20 @@ public class SignupLoginActivity extends AppCompatActivity {
 
         // Validate input
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(SignupLoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupLoginActivity.this, "Please fill all fields",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
         if(!isValidEmail(email)){
-            Toast.makeText(SignupLoginActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupLoginActivity.this, "Invalid email",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!PASSWORD_PATTERN.matcher(password).matches()) {
-            Toast.makeText(SignupLoginActivity.this, "Password not strong enough", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupLoginActivity.this, "Password not strong enough",
+                    Toast.LENGTH_SHORT).show();
             showPasswordInfoDialog();
             return;
         }
@@ -112,10 +120,13 @@ public class SignupLoginActivity extends AppCompatActivity {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(SignupLoginActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(SignupLoginActivity.this, RecipeListActivity.class));
+                        Toast.makeText(SignupLoginActivity.this, "Sign Up Successful",
+                                Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(SignupLoginActivity.this,
+                                RecipeListActivity.class));
                     } else {
-                        Toast.makeText(SignupLoginActivity.this, "Sign Up Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupLoginActivity.this, "Sign Up Failed",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -124,21 +135,25 @@ public class SignupLoginActivity extends AppCompatActivity {
         String email = emailEditText.getText().toString().trim();
 
         if (email.isEmpty()) {
-            Toast.makeText(SignupLoginActivity.this, "Please enter your email address", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupLoginActivity.this, "Please enter your email address",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
         if(!isValidEmail(email)){
-            Toast.makeText(SignupLoginActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupLoginActivity.this, "Invalid email",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
         auth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(SignupLoginActivity.this, "Password reset email sent", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupLoginActivity.this, "Password reset email sent",
+                                Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(SignupLoginActivity.this, "Error in sending password reset email", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupLoginActivity.this, "Error in sending password reset email",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -146,7 +161,8 @@ public class SignupLoginActivity extends AppCompatActivity {
     private void showPasswordInfoDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Password Requirements")
-                .setMessage("Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character.")
+                .setMessage("Password must be at least 8 characters long, include " +
+                        "uppercase, lowercase, digit, and special character.")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

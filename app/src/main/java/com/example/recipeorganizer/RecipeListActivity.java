@@ -39,6 +39,7 @@ public class RecipeListActivity extends AppCompatActivity {
         SearchView searchView = findViewById(R.id.searchView);
         Button profileButton = findViewById(R.id.profileButton);
         Button addRecipeButton = findViewById(R.id.addRecipeButton);
+        Button viewPublishedRecipesButton = findViewById(R.id.viewPublishedRecipesButton);
 
         // Initialize Firebase Database reference
         recipeRef = FirebaseDatabase.getInstance().getReference("recipes");
@@ -85,9 +86,9 @@ public class RecipeListActivity extends AppCompatActivity {
         });
 
         // Set up view published recipes click listener
-        Button viewPublishedRecipesButton = findViewById(R.id.viewPublishedRecipesButton);
         viewPublishedRecipesButton.setOnClickListener(v -> {
-                    Intent intent = new Intent(RecipeListActivity.this, PublishedRecipesActivity.class);
+                    Intent intent = new Intent(RecipeListActivity.this,
+                            PublishedRecipesActivity.class);
                     startActivity(intent); // Navigates to the Published Recipes screen
         });
     }
@@ -140,7 +141,8 @@ public class RecipeListActivity extends AppCompatActivity {
 
                     // Sort recipes in this category A-Z
                     List<Recipe> recipesInCategory = categorizedRecipes.get(category);
-                    Collections.sort(recipesInCategory, (r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName())); // Sort recipes A-Z
+                    Collections.sort(recipesInCategory, (r1, r2) -> r1.getName()
+                            .compareToIgnoreCase(r2.getName())); // Sort recipes A-Z
 
                     // Add recipes under this category
                     recipeList.addAll(recipesInCategory);

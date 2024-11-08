@@ -96,7 +96,8 @@ public class RecipeActivity extends AppCompatActivity {
     private void addRecipe() {
         String name = recipeNameEditText.getText().toString();
         String selectedCategory = categorySpinner.getSelectedItem().toString();
-        String category = "Others".equals(selectedCategory) ? customCategoryEditText.getText().toString() : selectedCategory;
+        String category = "Others".equals(selectedCategory) ? customCategoryEditText
+                .getText().toString() : selectedCategory;
 
         List<String> ingredients = new ArrayList<>();
         List<String> instructions = new ArrayList<>();
@@ -139,7 +140,8 @@ public class RecipeActivity extends AppCompatActivity {
         }
 
         if (name.isEmpty() || category.isEmpty() || ingredients.isEmpty() || instructions.isEmpty()) {
-            Toast.makeText(RecipeActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RecipeActivity.this, "Please fill all fields",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -160,10 +162,12 @@ public class RecipeActivity extends AppCompatActivity {
                         if ("Others".equals(selectedCategory)) {
                             saveCustomCategory(category);
                         }
-                        Toast.makeText(RecipeActivity.this, "Recipe Added", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RecipeActivity.this, "Recipe Added",
+                                Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        Toast.makeText(RecipeActivity.this, "Failed to Add Recipe", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RecipeActivity.this, "Failed to Add Recipe",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -228,7 +232,8 @@ public class RecipeActivity extends AppCompatActivity {
                             addIngredientField(ingredient);
                         }
                     } else {
-                        Toast.makeText(this, "Unable to collect ingredients list", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Unable to collect ingredients list",
+                                Toast.LENGTH_SHORT).show();
                     }
 
                     // Extract instructions
@@ -248,13 +253,15 @@ public class RecipeActivity extends AppCompatActivity {
                             addInstructionField(instruction);
                         }
                     } else {
-                        Toast.makeText(this, "Unable to collect instruction list", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Unable to collect instruction list",
+                                Toast.LENGTH_SHORT).show();
                     }
 
                     Toast.makeText(this, "Recipe generated!", Toast.LENGTH_SHORT).show();
                 });
             } catch (IOException e) {
-                runOnUiThread(() -> Toast.makeText(this, "Failed to fetch recipe", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(this, "Failed to fetch recipe",
+                        Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
@@ -262,21 +269,22 @@ public class RecipeActivity extends AppCompatActivity {
     // Method to fetch user categories from the database
     private void fetchUserCategories() {
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("category_preference").child(userId);
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance()
+                .getReference("category_preference").child(userId);
 
         categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userCategoriesList = new ArrayList<>();
                 // Add default categories
-                userCategoriesList.addAll(Arrays.asList(getResources().getStringArray(R.array.category_array)));
+                userCategoriesList.addAll(Arrays.asList(getResources()
+                        .getStringArray(R.array.category_array)));
 
                 // Check if the user has custom preferences
                 if (dataSnapshot.exists()) {
                     // Retrieve the categories as a List
                     List<String> userCategories = new ArrayList<>();
 
-                    // Assuming categories are stored as a List in Firebase
                     for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
                         // Get the value as a List<String>
                         List<String> categories = (List<String>) categorySnapshot.getValue();
@@ -293,15 +301,16 @@ public class RecipeActivity extends AppCompatActivity {
                 userCategoriesList.add("Others");
 
                 // Set the adapter for the Spinner
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeActivity.this, R.layout.spinner_item, userCategoriesList);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeActivity.this,
+                        R.layout.spinner_item, userCategoriesList);
                 categorySpinner.setAdapter(adapter);
 
-                // Now we can safely set the category selection
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(RecipeActivity.this, "Failed to fetch categories", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RecipeActivity.this, "Failed to fetch categories",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -309,7 +318,8 @@ public class RecipeActivity extends AppCompatActivity {
     // Method to save a new custom category
     private void saveCustomCategory(String customCategory) {
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("category_preference").child(userId);
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance()
+                .getReference("category_preference").child(userId);
 
         categoryRef.child("categories").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -323,11 +333,14 @@ public class RecipeActivity extends AppCompatActivity {
                 assert currentCategories != null;
                 if (!currentCategories.contains(customCategory) && !customCategory.isEmpty()) {
                     currentCategories.add(customCategory);
-                    categoryRef.child("categories").setValue(currentCategories).addOnCompleteListener(task -> {
+                    categoryRef.child("categories").setValue(currentCategories)
+                            .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Toast.makeText(RecipeActivity.this, "Category saved!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RecipeActivity.this, "Category saved!",
+                                    Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(RecipeActivity.this, "Failed to save category", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RecipeActivity.this, "Failed to save category",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -335,7 +348,8 @@ public class RecipeActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(RecipeActivity.this, "Failed to fetch current categories", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RecipeActivity.this, "Failed to fetch current categories",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -348,8 +362,10 @@ public class RecipeActivity extends AppCompatActivity {
 
         EditText ingredientEditText = new EditText(this);
         ingredientEditText.setText(ingredient);
-        ingredientEditText.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-        ingredientEditText.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        ingredientEditText.setTextColor(ContextCompat.getColor(this,
+                android.R.color.darker_gray));
+        ingredientEditText.setLayoutParams(new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
         Button deleteButton = new Button(this);
         deleteButton.setText("-");
@@ -367,8 +383,10 @@ public class RecipeActivity extends AppCompatActivity {
 
         EditText instructionEditText = new EditText(this);
         instructionEditText.setText(instruction);
-        instructionEditText.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-        instructionEditText.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        instructionEditText.setTextColor(ContextCompat.getColor(this,
+                android.R.color.darker_gray));
+        instructionEditText.setLayoutParams(new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
         Button deleteButton = new Button(this);
         deleteButton.setText("-");
